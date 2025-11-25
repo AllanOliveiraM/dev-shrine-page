@@ -1,0 +1,4812 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>🌀 Dev Shrine – A Página Que Te Debuga</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#050816" />
+  <meta name="description" content="Uma página enigmática, cheia de easter eggs, puzzles, animações e segredos para devs curiosos." />
+
+  <style>
+    :root {
+      --bg: #020617;
+      --bg-alt: #020617;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.25);
+      --accent-2: #a855f7;
+      --accent-3: #22c55e;
+      --text-main: #e5e7eb;
+      --text-soft: #9ca3af;
+      --danger: #f97373;
+      --card-bg: rgba(15, 23, 42, 0.85);
+      --border-subtle: rgba(148, 163, 184, 0.35);
+      --radius-lg: 22px;
+      --shadow-soft: 0 18px 60px rgba(15, 23, 42, 0.9);
+      --font-main: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Roboto", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background:
+        radial-gradient(circle at 10% 0%, rgba(56,189,248,0.18) 0, transparent 55%),
+        radial-gradient(circle at 90% 100%, rgba(168,85,247,0.22) 0, transparent 55%),
+        radial-gradient(circle at 50% 50%, rgba(15,23,42,1) 0, #020617 65%, #000 100%);
+      color: var(--text-main);
+      overflow: hidden;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      position: relative;
+      cursor: default;
+      user-select: none;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -20vmax;
+      background-image:
+        linear-gradient(90deg, rgba(148,163,184,0.13) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(148,163,184,0.09) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.25;
+      mix-blend-mode: soft-light;
+      pointer-events: none;
+      animation: panGrid 32s linear infinite;
+      z-index: -3;
+    }
+
+    @keyframes panGrid {
+      from { transform: translate3d(0,0,0); }
+      to { transform: translate3d(-80px, -80px, 0); }
+    }
+
+    .noise {
+      pointer-events: none;
+      position: fixed;
+      inset: -20px;
+      opacity: 0.09;
+      mix-blend-mode: soft-light;
+      z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='noStitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.9'/%3E%3C/svg%3E");
+    }
+
+    .zone {
+      position: relative;
+      z-index: 1;
+      width: min(1120px, 100%);
+      margin: 20px;
+      display: grid;
+      grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.4fr);
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 900px) {
+      body {
+        overflow-y: auto;
+      }
+      .zone {
+        grid-template-columns: minmax(0, 1fr);
+        margin: 20px 16px 40px 16px;
+      }
+    }
+
+    .panel {
+      background: linear-gradient(
+          145deg,
+          rgba(148,163,184,0.15),
+          rgba(15,23,42,0.95)
+        );
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(18px) saturate(135%);
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      background:
+        radial-gradient(circle at 0 0, rgba(56,189,248,0.22), transparent 50%),
+        radial-gradient(circle at 100% 100%, rgba(168,85,247,0.32), transparent 50%);
+      opacity: 0.4;
+      mix-blend-mode: soft-light;
+      pointer-events: none;
+    }
+
+    .panel-inner {
+      position: relative;
+      padding: 22px 24px 24px 24px;
+      z-index: 1;
+    }
+
+    @media (max-width: 600px) {
+      .panel-inner {
+        padding: 20px 16px 18px 16px;
+      }
+    }
+
+    /* HERO */
+
+    .hero-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 10px 4px 5px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 0 0, rgba(56,189,248,0.55), transparent 72%);
+      border: 1px solid rgba(56,189,248,0.35);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-pill::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(148,163,184,0.25),
+        transparent
+      );
+      transform: translateX(-100%);
+      animation: pillShine 5s ease-in-out infinite;
+    }
+
+    @keyframes pillShine {
+      0%, 82% { transform: translateX(-120%); }
+      100% { transform: translateX(130%); }
+    }
+
+    .pill-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      border: 2px solid rgba(15,23,42,0.8);
+      background: radial-gradient(circle at 30% 20%, #f9fafb, #e5e7eb);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      box-shadow: 0 0 0 1px rgba(15,23,42,0.8);
+      transform: translateZ(0);
+    }
+
+    .pill-dot-inner {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow:
+        0 0 0 2px rgba(15,23,42,0.9),
+        0 0 10px rgba(34,197,94,0.9);
+      animation: ping 1.4s ease-out infinite;
+    }
+
+    @keyframes ping {
+      0% { transform: scale(1); opacity: 1; }
+      80% { transform: scale(1.9); opacity: 0; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+
+    .hero-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-soft);
+      opacity: 0.9;
+    }
+
+    .hero-tab {
+      padding: 2px 6px;
+      border-radius: 8px;
+      border: 1px solid rgba(148,163,184,0.45);
+      background: radial-gradient(circle at 0 0, rgba(148,163,184,0.22), transparent 58%);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+    }
+
+    .hero-tab span {
+      opacity: 0.95;
+    }
+
+    .hero-tab:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 28px rgba(15,23,42,0.65);
+      border-color: var(--accent);
+    }
+
+    .hero-tab-key {
+      padding: 1px 5px;
+      border-radius: 6px;
+      background: rgba(15,23,42,0.95);
+      border: 1px solid rgba(148,163,184,0.55);
+      font-size: 9px;
+    }
+
+    .hero-title {
+      font-size: clamp(24px, 3vw + 8px, 34px);
+      line-height: 1.1;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 5px;
+      position: relative;
+      display: inline-block;
+      padding-right: 30px;
+      cursor: pointer;
+    }
+
+    .hero-title-main {
+      display: inline-block;
+      position: relative;
+      text-shadow:
+        0 0 25px rgba(56,189,248,0.9),
+        0 0 40px rgba(37,99,235,0.8);
+      animation: titleGlow 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes titleGlow {
+      0% { text-shadow: 0 0 16px rgba(56,189,248,0.6), 0 0 32px rgba(37,99,235,0.5); }
+      100% { text-shadow: 0 0 26px rgba(56,189,248,1), 0 0 52px rgba(37,99,235,0.9); }
+    }
+
+    .hero-title-glitch {
+      position: absolute;
+      left: 1px;
+      top: 0;
+      opacity: 0;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    .hero-title-glitch span {
+      position: absolute;
+      inset: 0;
+    }
+
+    .hero-title-glitch span:nth-child(1) {
+      color: rgba(56,189,248,0.82);
+      clip-path: polygon(0 0, 100% 0, 100% 42%, 0 52%);
+      transform: translateX(-1px);
+    }
+
+    .hero-title-glitch span:nth-child(2) {
+      color: rgba(168,85,247,0.9);
+      clip-path: polygon(0 52%, 100% 48%, 100% 100%, 0 100%);
+      transform: translateX(1px);
+    }
+
+    .hero-title-glitch.active {
+      animation: glitch 0.58s steps(2, end) 1;
+    }
+
+    @keyframes glitch {
+      0% { opacity: 0; transform: translate(0,0); }
+      15% { opacity: 1; transform: translate(-2px,1px); }
+      35% { opacity: 1; transform: translate(2px,-2px); }
+      55% { opacity: 1; transform: translate(-1px,2px); }
+      80% { opacity: 1; transform: translate(1px,0); }
+      100% { opacity: 0; transform: translate(0,0); }
+    }
+
+    .hero-badge {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--accent-2);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .hero-badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #e5e7eb, #a855f7);
+      box-shadow: 0 0 14px rgba(168,85,247,0.9);
+    }
+
+    .hero-subtitle {
+      font-size: 13px;
+      max-width: 520px;
+      color: var(--text-soft);
+      margin-bottom: 14px;
+    }
+
+    .hero-subtitle strong {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .hero-subtitle code {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      padding: 2px 5px;
+      border-radius: 6px;
+      border: 1px solid rgba(148,163,184,0.45);
+      background: rgba(15,23,42,0.9);
+      color: var(--accent-2);
+    }
+
+    .typer {
+      margin-top: 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .typer-label {
+      color: var(--text-soft);
+    }
+
+    .typer-text {
+      min-height: 1.2em;
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: 1px solid rgba(148,163,184,0.6);
+      animation: caret 1s steps(1, end) infinite;
+    }
+
+    @keyframes caret {
+      0%, 60% { border-color: rgba(148,163,184,0.6); }
+      61%, 100% { border-color: transparent; }
+    }
+
+    /* Buttons */
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+      margin-bottom: 4px;
+    }
+
+    .btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 7px 13px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      border: 1px solid transparent;
+      cursor: pointer;
+      background: none;
+      color: inherit;
+      overflow: hidden;
+      transform: translateZ(0);
+      transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease, background 0.14s ease;
+    }
+
+    .btn-primary {
+      background: radial-gradient(circle at 0 0, rgba(56,189,248,1), rgba(37,99,235,1));
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,1),
+        0 16px 40px rgba(37,99,235,0.7);
+      color: #0b1120;
+      border-color: rgba(148,163,184,0.7);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px) translateZ(0);
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,1),
+        0 20px 55px rgba(37,99,235,0.9);
+      background: radial-gradient(circle at 0 0, rgba(56,189,248,1), rgba(59,130,246,1));
+    }
+
+    .btn-ghost {
+      border-color: rgba(148,163,184,0.5);
+      background: radial-gradient(circle at 0 0, rgba(148,163,184,0.2), rgba(15,23,42,0.9));
+      color: var(--text-soft);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--accent-2);
+      color: #e5e7eb;
+      transform: translateY(-1px);
+      box-shadow: 0 14px 36px rgba(15,23,42,0.9);
+    }
+
+    .btn span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(15,23,42,0.6);
+      background: rgba(15,23,42,0.9);
+      font-size: 10px;
+    }
+
+    .btn-primary .btn-icon {
+      border-color: rgba(15,23,42,0.9);
+      background: rgba(15,23,42,0.9);
+      color: var(--accent);
+    }
+
+    .btn-ghost .btn-icon {
+      border-color: rgba(148,163,184,0.8);
+      color: var(--accent-2);
+    }
+
+    .btn-glow {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 10% 0%, rgba(248,250,252,0.32), transparent 55%);
+      opacity: 0;
+      transition: opacity 0.16s ease;
+      mix-blend-mode: soft-light;
+    }
+
+    .btn:hover .btn-glow {
+      opacity: 1;
+    }
+
+    /* Floating chips */
+
+    .hero-chips-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 12px;
+    }
+
+    .chip {
+      padding: 2px 8px 3px 8px;
+      border-radius: 999px;
+      border: 1px dashed rgba(148,163,184,0.7);
+      font-size: 11px;
+      color: var(--text-soft);
+      backdrop-filter: blur(4px);
+      background: radial-gradient(circle at 0 0, rgba(148,163,184,0.12), rgba(15,23,42,0.85));
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chip-badge {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #e5e7eb, #38bdf8);
+      box-shadow: 0 0 10px rgba(56,189,248,0.9);
+    }
+
+    /* DEV FEED / QUESTS */
+
+    .side-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .side-title {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-soft);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .side-title span {
+      color: var(--accent-2);
+    }
+
+    .side-switch {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-soft);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .side-switch-toggle {
+      width: 32px;
+      height: 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.7);
+      background: rgba(15,23,42,0.95);
+      padding: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      position: relative;
+      cursor: pointer;
+      transition: border-color 0.18s ease, background 0.18s ease;
+    }
+
+    .side-switch-toggle::after {
+      content: "";
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #f9fafb, #e5e7eb);
+      box-shadow: 0 0 10px rgba(156,163,175,0.9);
+      transform: translateX(0);
+      transition: transform 0.18s ease;
+    }
+
+    .side-switch-toggle.on {
+      border-color: var(--accent);
+      background: radial-gradient(circle at 0 0, rgba(56,189,248,0.36), rgba(15,23,42,1));
+    }
+
+    .side-switch-toggle.on::after {
+      transform: translateX(14px);
+      box-shadow: 0 0 12px rgba(56,189,248,0.9);
+    }
+
+    .quests {
+      margin-top: 6px;
+      border-radius: 16px;
+      border: 1px solid rgba(31,41,55,0.9);
+      background: radial-gradient(circle at 0 0, rgba(15,23,42,0.9), rgba(15,23,42,0.97));
+      padding: 10px 10px 8px 10px;
+      font-size: 12px;
+    }
+
+    .quests-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      color: var(--text-soft);
+      font-size: 11px;
+    }
+
+    .quests-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      max-height: 205px;
+      overflow: hidden auto;
+      padding-right: 4px;
+    }
+
+    .quests-list::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .quests-list::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .quests-list::-webkit-scrollbar-thumb {
+      background: rgba(148,163,184,0.65);
+      border-radius: 999px;
+    }
+
+    .quest-item {
+      display: grid;
+      grid-template-columns: auto minmax(0,1fr) auto;
+      gap: 8px;
+      align-items: flex-start;
+      padding: 4px 6px;
+      border-radius: 10px;
+      border: 1px solid rgba(31,41,55,0.9);
+      background: radial-gradient(circle at 0 0, rgba(15,23,42,0.9), rgba(15,23,42,0.98));
+      position: relative;
+    }
+
+    .quest-item::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 0 0, rgba(56,189,248,0.2), transparent 55%);
+      opacity: 0;
+      transition: opacity 0.22s ease;
+      pointer-events: none;
+    }
+
+    .quest-status {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      width: 18px;
+      text-align: center;
+      color: rgba(148,163,184,0.7);
+    }
+
+    .quest-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .quest-title {
+      font-weight: 500;
+      font-size: 12px;
+      letter-spacing: 0.01em;
+    }
+
+    .quest-meta {
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+
+    .quest-chip {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 1px 6px 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.6);
+      color: var(--accent-2);
+      background: rgba(15,23,42,0.95);
+    }
+
+    .quest-emoji {
+      font-size: 16px;
+      opacity: 0.85;
+    }
+
+    .quest-item.completed {
+      border-color: rgba(56,189,248,0.95);
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,1),
+        0 0 24px rgba(56,189,248,0.85);
+    }
+
+    .quest-item.completed::before {
+      opacity: 1;
+    }
+
+    .quest-item.completed .quest-status {
+      color: #22c55e;
+    }
+
+    .quest-item.completed .quest-title {
+      color: var(--accent);
+    }
+
+    .quest-item.completed .quest-chip {
+      border-color: rgba(34,197,94,0.9);
+      color: #bbf7d0;
+      background: radial-gradient(circle at 0 0, rgba(34,197,94,0.45), rgba(15,23,42,0.95));
+    }
+
+    .quest-item[data-quest-id="secret-title"] .quest-title::after {
+      content: " [???]";
+      font-size: 10px;
+      color: rgba(148,163,184,0.75);
+      font-weight: 400;
+    }
+
+    /* CONSOLE / LOG */
+
+    .console {
+      margin-top: 10px;
+      border-radius: 16px;
+      border: 1px solid rgba(31,41,55,0.9);
+      background: radial-gradient(circle at 0 0, rgba(15,23,42,0.93), rgba(15,23,42,0.98));
+      padding: 8px 9px 6px 9px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-soft);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .console-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 3px;
+    }
+
+    .console-dots {
+      display: inline-flex;
+      gap: 4px;
+    }
+
+    .console-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #4b5563;
+      box-shadow: 0 0 0 1px rgba(15,23,42,1);
+    }
+
+    .console-dot:nth-child(1) { background: #f97373; }
+    .console-dot:nth-child(2) { background: #facc15; }
+    .console-dot:nth-child(3) { background: #22c55e; }
+
+    .console-title {
+      font-size: 10px;
+      color: rgba(148,163,184,0.9);
+    }
+
+    .console-body {
+      max-height: 120px;
+      overflow: auto;
+    }
+
+    .console-body::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .console-body::-webkit-scrollbar-thumb {
+      background: rgba(75,85,99,0.85);
+      border-radius: 999px;
+    }
+
+    .console-line {
+      display: flex;
+      gap: 4px;
+      padding: 1px 0;
+      white-space: nowrap;
+    }
+
+    .console-prefix {
+      color: rgba(55,65,81,0.9);
+    }
+
+    .console-info {
+      color: #38bdf8;
+    }
+
+    .console-warn {
+      color: #facc15;
+    }
+
+    .console-secret {
+      color: #a855f7;
+    }
+
+    .console-hint {
+      color: #22c55e;
+    }
+
+    .console-time {
+      color: rgba(148,163,184,0.8);
+    }
+
+    /* SECRET PANELS / LAB */
+
+    .lab {
+      margin-top: 12px;
+      padding: 7px 10px 8px 10px;
+      border-radius: 13px;
+      border: 1px dashed rgba(148,163,184,0.55);
+      background: radial-gradient(circle at 0 0, rgba(15,23,42,0.9), rgba(15,23,42,0.98));
+      font-size: 11px;
+      color: var(--text-soft);
+      display: grid;
+      grid-template-columns: minmax(0,1.2fr) minmax(0,1.1fr);
+      gap: 10px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .lab {
+        grid-template-columns: minmax(0,1fr);
+      }
+    }
+
+    .lab-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .lab-code {
+      border-radius: 11px;
+      border: 1px solid rgba(31,41,55,0.9);
+      background: radial-gradient(circle at 0 0, rgba(15,23,42,0.9), rgba(15,23,42,0.98));
+      padding: 6px 7px 6px 7px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .lab-code pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .lab-code .ghost {
+      opacity: 0.4;
+    }
+
+    .lab-hex {
+      mix-blend-mode: screen;
+      position: relative;
+      border-radius: 12px;
+      border: 1px solid rgba(56,189,248,0.5);
+      background:
+        radial-gradient(circle at 0 0, rgba(56,189,248,0.24), rgba(15,23,42,0.98));
+      padding: 8px 8px 8px 8px;
+      overflow: hidden;
+    }
+
+    .lab-hex-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 4px;
+      font-size: 10px;
+    }
+
+    .lab-hex-cell {
+      border-radius: 6px;
+      border: 1px solid rgba(15,23,42,0.9);
+      background: rgba(15,23,42,0.9);
+      padding: 3px 4px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .lab-hex-cell span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .lab-hex-cell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 0 0, rgba(148,163,184,0.45), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .lab-hex-cell:hover::before {
+      opacity: 1;
+    }
+
+    .lab-legend {
+      margin-top: 5px;
+      font-size: 10px;
+      color: rgba(148,163,184,0.85);
+    }
+
+    .lab-legend code {
+      font-size: 10px;
+      padding: 1px 4px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.6);
+      background: rgba(15,23,42,0.9);
+      color: var(--accent-2);
+    }
+
+    /* ROOT MODE */
+
+    .root-mode {
+      margin-top: 10px;
+      border-radius: 16px;
+      border: 1px solid rgba(34,197,94,0.7);
+      background:
+        radial-gradient(circle at 0 0, rgba(34,197,94,0.2), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(22,163,74,0.25), rgba(6,95,70,0.9));
+      padding: 8px 9px 8px 9px;
+      font-size: 11px;
+      color: #bbf7d0;
+      font-family: var(--font-mono);
+      position: relative;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,1),
+        0 0 28px rgba(34,197,94,0.9);
+      display: none;
+    }
+
+    .root-mode::before {
+      content: "";
+      position: absolute;
+      inset: -30%;
+      background-image:
+        radial-gradient(circle at 20% 0%, rgba(248,250,252,0.12), transparent 55%),
+        radial-gradient(circle at 80% 100%, rgba(187,247,208,0.18), transparent 55%);
+      opacity: 0.65;
+      mix-blend-mode: soft-light;
+    }
+
+    .root-mode-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .root-mode-line {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 1px;
+      white-space: nowrap;
+    }
+
+    .root-mode-prefix {
+      color: #4ade80;
+    }
+
+    .root-mode-warning {
+      color: #fde68a;
+    }
+
+    .root-mode-hint {
+      color: #a5f3fc;
+    }
+
+    /* PORTAL OVERLAY */
+
+    .portal-overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 50% 0%, rgba(56,189,248,0.18), rgba(15,23,42,0.96));
+      backdrop-filter: blur(20px) saturate(140%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .portal-overlay.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .portal-card {
+      width: min(420px, 90vw);
+      border-radius: 22px;
+      border: 1px solid rgba(56,189,248,0.8);
+      background: radial-gradient(circle at 0 0, rgba(56,189,248,0.15), rgba(15,23,42,0.98));
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,1),
+        0 24px 70px rgba(15,23,42,1);
+      padding: 22px 20px 18px 20px;
+      position: relative;
+      overflow: hidden;
+      transform: scale(0.92) translateY(10px);
+      transition: transform 0.25s ease;
+    }
+
+    .portal-overlay.visible .portal-card {
+      transform: scale(1) translateY(0);
+    }
+
+    .portal-card::before {
+      content: "";
+      position: absolute;
+      inset: -20%;
+      background-image:
+        radial-gradient(circle at 10% 0%, rgba(248,250,252,0.22), transparent 60%),
+        radial-gradient(circle at 90% 100%, rgba(129,140,248,0.3), transparent 60%);
+      mix-blend-mode: soft-light;
+      opacity: 0.9;
+    }
+
+    .portal-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .portal-title {
+      font-size: 18px;
+      margin-bottom: 6px;
+      letter-spacing: -0.03em;
+    }
+
+    .portal-sub {
+      font-size: 12px;
+      color: var(--text-soft);
+      margin-bottom: 12px;
+    }
+
+    .portal-sub code {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 1px 5px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.6);
+      background: rgba(15,23,42,0.9);
+      color: var(--accent-2);
+    }
+
+    .portal-grid {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+      gap: 8px;
+      font-size: 11px;
+    }
+
+    .portal-cell {
+      border-radius: 12px;
+      border: 1px solid rgba(15,23,42,0.9);
+      background: rgba(15,23,42,0.95);
+      padding: 7px 8px 7px 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .portal-cell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 0 0, rgba(148,163,184,0.35), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.18s ease;
+    }
+
+    .portal-cell:hover::before {
+      opacity: 1;
+    }
+
+    .portal-cell-label {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 9px;
+      color: rgba(148,163,184,0.86);
+      margin-bottom: 2px;
+    }
+
+    .portal-cell-main {
+      font-family: var(--font-mono);
+      color: var(--accent);
+    }
+
+    .portal-close {
+      margin-top: 10px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .portal-close button {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      border-radius: 999px;
+      padding: 4px 10px;
+      border: 1px solid rgba(148,163,184,0.8);
+      background: rgba(15,23,42,0.98);
+      color: var(--text-soft);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: border-color 0.14s ease, color 0.14s ease, transform 0.14s ease;
+    }
+
+    .portal-close button:hover {
+      border-color: var(--accent);
+      color: #e5e7eb;
+      transform: translateY(-1px);
+    }
+
+    /* FLOATING SYMBOLS */
+
+    .floaters {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .floater {
+      position: absolute;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: rgba(148,163,184,0.75);
+      opacity: 0.65;
+      animation: floatUp 18s linear infinite;
+      filter: blur(0.1px);
+    }
+
+    @keyframes floatUp {
+      0% { transform: translate3d(0, 0, 0); opacity: 0; }
+      10% { opacity: 0.7; }
+      80% { opacity: 0.7; }
+      100% { transform: translate3d(0, -180px, 0); opacity: 0; }
+    }
+
+    .floater:nth-child(1) { left: 10%; bottom: -40px; animation-duration: 22s; }
+    .floater:nth-child(2) { left: 30%; bottom: -60px; animation-duration: 18s; }
+    .floater:nth-child(3) { left: 55%; bottom: -30px; animation-duration: 26s; }
+    .floater:nth-child(4) { left: 75%; bottom: -50px; animation-duration: 20s; }
+    .floater:nth-child(5) { left: 88%; bottom: -70px; animation-duration: 24s; }
+
+    /* TOAST */
+
+    .toast {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%) translateY(120%);
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(56,189,248,0.8);
+      background: rgba(15,23,42,0.98);
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,1),
+        0 18px 60px rgba(15,23,42,1);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 40;
+      transition: opacity 0.26s ease, transform 0.26s ease;
+    }
+
+    .toast.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast-pill {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #22c55e, #16a34a);
+      box-shadow: 0 0 10px rgba(34,197,94,0.9);
+    }
+
+    .toast-hidden {
+      border-color: rgba(168,85,247,0.85);
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,1),
+        0 18px 60px rgba(15,23,42,1);
+    }
+
+    .toast-hidden .toast-pill {
+      background: radial-gradient(circle at 30% 20%, #a855f7, #7c3aed);
+      box-shadow: 0 0 10px rgba(168,85,247,0.9);
+    }
+
+    /* MISC */
+
+    .hint-mini {
+      margin-top: 4px;
+      font-size: 10px;
+      color: rgba(148,163,184,0.8);
+    }
+
+    .hint-mini strong {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .hint-mini code {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 0 4px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.7);
+      background: rgba(15,23,42,0.9);
+      color: var(--accent-2);
+    }
+
+    .credit {
+      margin-top: 8px;
+      font-size: 10px;
+      color: rgba(107,114,128,0.9);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .credit span:last-child {
+      opacity: 0.8;
+    }
+
+    .credit-secret {
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .credit-secret strong {
+      color: var(--accent-2);
+    }
+
+    /* DEBUG LAB HIDDEN SECTION */
+
+    #debug-lab {
+      display: none;
+      margin-top: 10px;
+      border-radius: 14px;
+      border: 1px dashed rgba(234,179,8,0.8);
+      padding: 7px 9px 7px 9px;
+      background: radial-gradient(circle at 0 0, rgba(234,179,8,0.15), rgba(15,23,42,0.98));
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: #facc15;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #debug-lab::before {
+      content: "";
+      position: absolute;
+      inset: -20%;
+      background-image:
+        radial-gradient(circle at 0 0, rgba(250,250,250,0.2), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(253,224,71,0.3), transparent 60%);
+      opacity: 0.7;
+      mix-blend-mode: soft-light;
+    }
+
+    #debug-lab-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .debug-lab-line {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 1px;
+      white-space: nowrap;
+    }
+
+    .debug-lab-prefix {
+      color: #facc15;
+    }
+
+    .debug-lab-hint {
+      color: #e5e7eb;
+    }
+
+    /* DATA / SECRETS */
+
+    .secret-binary {
+      font-size: 9px;
+      opacity: 0.35;
+      font-family: var(--font-mono);
+      margin-top: 3px;
+    }
+
+    /* subtle link-like hints but not actual anchors */
+
+    .pseudo-link {
+      text-decoration: underline dotted;
+      text-decoration-thickness: 0.5px;
+      text-underline-offset: 3px;
+      cursor: pointer;
+      color: var(--accent-3);
+    }
+  </style>
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="floaters" aria-hidden="true">
+    <div class="floater">while(true){/*?*/}</div>
+    <div class="floater">if (portal) portal()</div>
+    <div class="floater">console.log("👀")</div>
+    <div class="floater">/* TODO: entender esta página */</div>
+    <div class="floater">0b101010 // sus</div>
+  </div>
+
+  <!-- PORTAL OVERLAY (trigger via window.portal()) -->
+  <div class="portal-overlay" id="portal-overlay" aria-hidden="true">
+    <div class="portal-card">
+      <div class="portal-inner">
+        <div class="portal-title">🌀 Portal Dev / Spoiler Zone</div>
+        <div class="portal-sub">
+          Você executou <code>portal()</code> no console.<br />
+          Isso automaticamente marca uma das <strong>quests</strong> como concluída.
+          <br />Use este lugar com sabedoria.
+        </div>
+        <div class="portal-grid">
+          <div class="portal-cell">
+            <div class="portal-cell-label">seed</div>
+            <div class="portal-cell-main" id="portal-seed">0x??</div>
+          </div>
+          <div class="portal-cell">
+            <div class="portal-cell-label">hint</div>
+            <div class="portal-cell-main">
+              procure por <span class="pseudo-link" data-hint="data-ghost">data-ghost</span>
+            </div>
+          </div>
+          <div class="portal-cell">
+            <div class="portal-cell-label">quest unlocked</div>
+            <div class="portal-cell-main">"Cheat Dev"</div>
+          </div>
+          <div class="portal-cell">
+            <div class="portal-cell-label">status</div>
+            <div class="portal-cell-main" id="portal-status">[ ok ]</div>
+          </div>
+        </div>
+        <div class="portal-close">
+          <button type="button" id="portal-close-btn">
+            <span>fechar portal</span>
+            <span>⨯</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="zone">
+    <!-- LEFT PANEL: HERO / LAB -->
+    <section class="panel" id="panel-main">
+      <div class="panel-inner">
+        <header class="hero-header">
+          <div class="hero-pill">
+            <span class="pill-dot"><span class="pill-dot-inner"></span></span>
+            <span>LIVE EXPERIMENT • DEV SHRINE</span>
+          </div>
+          <div class="hero-controls">
+            <div class="hero-tab" id="hero-run">
+              <span class="hero-tab-key">▶</span>
+              <span>run page</span>
+            </div>
+            <div class="hero-tab" id="hero-break">
+              <span class="hero-tab-key">⏸</span>
+              <span>break reality</span>
+            </div>
+          </div>
+        </header>
+
+        <div class="hero-badge">
+          <span class="hero-badge-dot"></span>
+          <span>esta página não foi feita para ser entendida na primeira leitura</span>
+        </div>
+
+        <h1 class="hero-title" id="hero-title">
+          <span class="hero-title-main">A página que debuga <span class="pseudo-link" data-hint="você mesmo">você</span></span>
+          <span class="hero-title-glitch" aria-hidden="true">
+            <span>A pág1na qu3 debu9a v0cê</span>
+            <span>A pág1na qu3 debu9a v0cê</span>
+          </span>
+        </h1>
+
+        <p class="hero-subtitle">
+          Não é um <strong>404</strong>, não é um landing page normal. Pense como
+          um <strong>mini ARG para devs</strong> com animações, puzzles e easter eggs que
+          só aparecem para quem inspeciona, debuga e questiona. <br />
+          <span>Hint: abra o console e digite <code>help()</code>.</span>
+        </p>
+
+        <div class="typer" aria-label="mensagem dinâmica">
+          <span class="typer-label">dev-feed &gt;</span>
+          <span class="typer-text" id="typer-text"></span>
+        </div>
+
+        <div class="hero-actions">
+          <button class="btn btn-primary" id="btn-start">
+            <span class="btn-glow"></span>
+            <span class="btn-icon">▶</span>
+            <span>Começar o puzzle</span>
+          </button>
+          <button class="btn btn-ghost" id="btn-spoiler">
+            <span class="btn-glow"></span>
+            <span class="btn-icon">?</span>
+            <span>Sem spoilers, só vibes</span>
+          </button>
+        </div>
+
+        <div class="hero-chips-row">
+          <div class="chip" data-ghost="tw-lore">
+            <span class="chip-badge"></span>
+            <span>Enigmática &amp; reativa</span>
+          </div>
+          <div class="chip">
+            <span class="chip-badge"></span>
+            <span>K. code habilitado</span>
+          </div>
+          <div class="chip">
+            <span class="chip-badge"></span>
+            <span>console easter eggs</span>
+          </div>
+          <div class="chip">
+            <span class="chip-badge"></span>
+            <span>feito para youtubers de tech ♥</span>
+          </div>
+        </div>
+
+        <div class="lab">
+          <div>
+            <div class="lab-title">🔬 snippet observable</div>
+            <div class="lab-code">
+              <pre>
+<span class="ghost">// esta função é mais sobre você do que sobre o DOM</span>
+function introspect(dev) {
+  const { curiosidade, paciência, tempoLivre } = dev ?? {};
+  if (!curiosidade) return "scroll.";
+  if (tempoLivre &lt; 3) return "salvar nos favoritos.";
+  if (paciência &lt; 2) return "assistir um react no YouTube.";
+  return "investigar cada pixel desta página.";
+}
+
+// HINT: introspect({ tempoLivre: 42, curiosidade: true, paciência: 3 })
+              </pre>
+              <div class="secret-binary">
+                01001110 01100101 01101101 00100000 01110100 01101111
+                01100100 01101111 00100000 01100010 01110101 01100111
+                00100000 01100101 01110011 01110100 01100001 00100000
+                01100010 01100001 01100011 01101011 01100100 01101111
+                01101111 01110010 00101110
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="lab-title">🧬 hex entropy</div>
+            <div class="lab-hex">
+              <div class="lab-hex-grid">
+                <div class="lab-hex-cell"><span>0x4B</span></div>
+                <div class="lab-hex-cell"><span>0x6F</span></div>
+                <div class="lab-hex-cell"><span>0x6E</span></div>
+                <div class="lab-hex-cell"><span>0x61</span></div>
+                <div class="lab-hex-cell"><span>0x6D</span></div>
+                <div class="lab-hex-cell"><span>0x69</span></div>
+                <div class="lab-hex-cell"><span>0x20</span></div>
+                <div class="lab-hex-cell"><span>0x3F</span></div>
+              </div>
+              <div class="lab-legend">
+                <span>Sequências...<code>Teclas?</code>.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="debug-lab">
+          <div id="debug-lab-inner">
+            <div class="debug-lab-line">
+              <span class="debug-lab-prefix">[debug-lab]</span>
+              <span class="debug-lab-hint">Você digitou <code>debug</code> no teclado.</span>
+            </div>
+            <div class="debug-lab-line">
+              <span class="debug-lab-prefix">[hint]</span>
+              <span>Alguns segredos só aparecem quando você digita. Tente também "root".</span>
+            </div>
+            <div class="debug-lab-line">
+              <span class="debug-lab-prefix">[note]</span>
+              <span>Clique 3x no título principal para um glitch honesto.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="credit">
+          <span class="credit-secret">
+            &lt;dev-shrine <strong data-ghost="you-are-the-easter-egg">/&gt;</strong>
+          </span>
+          <span>// se chegou até aqui, anota a hora: <span id="credit-time">--:--:--</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL: QUESTS / CONSOLE -->
+    <aside class="panel">
+      <div class="panel-inner">
+        <header class="side-header">
+          <div class="side-title">
+            <span>quest log</span>
+            <span>// dev shrine</span>
+          </div>
+          <div class="side-switch">
+            <span>modo caçador</span>
+            <div class="side-switch-toggle" id="hunter-switch" role="switch" aria-checked="false"></div>
+          </div>
+        </header>
+
+        <section class="quests" aria-label="lista de quests">
+          <div class="quests-header">
+            <span>objetivos descobertos</span>
+            <span id="quests-progress">0 / 7 completos</span>
+          </div>
+          <ul class="quests-list" id="quests-list">
+            <li class="quest-item" data-quest-id="start">
+              <span class="quest-status">□</span>
+              <div class="quest-main">
+                <div class="quest-title">Clique em "Começar o puzzle"</div>
+                <div class="quest-meta">
+                  <span class="quest-chip">intro</span>
+                  &nbsp;→ todo dev precisa dar o primeiro clique.
+                </div>
+              </div>
+              <span class="quest-emoji">🎬</span>
+            </li>
+            <li class="quest-item" data-quest-id="console">
+              <span class="quest-status">□</span>
+              <div class="quest-main">
+                <div class="quest-title">Descubra o comando secreto</div>
+                <div class="quest-meta">
+                  <span class="quest-chip">console.log</span>
+                  &nbsp;→ ajuda: leia a descrição principal com cuidado.
+                </div>
+              </div>
+              <span class="quest-emoji">🖥️</span>
+            </li>
+            <li class="quest-item" data-quest-id="debug">
+              <span class="quest-status">□</span>
+              <div class="quest-main">
+                <div class="quest-title">Desbloqueie o Debug Lab digitando uma palavra</div>
+                <div class="quest-meta">
+                  <span class="quest-chip">keyboard</span>
+                  &nbsp;→ uma palavra que devs usam muito ao investigar bugs.
+                </div>
+              </div>
+              <span class="quest-emoji">🐛</span>
+            </li>
+            <li class="quest-item" data-quest-id="konami">
+              <span class="quest-status">□</span>
+              <div class="quest-main">
+                <div class="quest-title">Ative o Modo Raiz com um código clássico</div>
+                <div class="quest-meta">
+                  &nbsp;→ sim, é exatamente o que você está pensando.
+                </div>
+              </div>
+              <span class="quest-emoji">🧬</span>
+            </li>
+            <li class="quest-item" data-quest-id="secret-title">
+              <span class="quest-status">□</span>
+              <div class="quest-main">
+                <div class="quest-title">Provoque o glitch do título principal</div>
+                <div class="quest-meta">
+                  <span class="quest-chip">ui-glitch</span>
+                  &nbsp;→ ... repetidamente onde a página parece mais confiante.
+                </div>
+              </div>
+              <span class="quest-emoji">✨</span>
+            </li>
+            <li class="quest-item" data-quest-id="portal">
+              <span class="quest-status">□</span>
+              <div class="quest-main">
+                <div class="quest-title">Abra o portal oculto desta página</div>
+                <div class="quest-meta">
+                  <span class="quest-chip">cheat dev</span>
+                  &nbsp;→ quando tudo falha, some devs chamam funções globais.
+                </div>
+              </div>
+              <span class="quest-emoji">🌀</span>
+            </li>
+            <li class="quest-item" data-quest-id="hunter">
+              <span class="quest-status">□</span>
+              <div class="quest-main">
+                <div class="quest-title">Ative o modo caçador de easter egg</div>
+                <div class="quest-meta">
+                  <span class="quest-chip">hunter-mode</span>
+                  &nbsp;→ só ligar o switch já muda a vibe da página.
+                </div>
+              </div>
+              <span class="quest-emoji">🕵️‍♂️</span>
+            </li>
+
+                        <li class="quest-item">
+              <span class="quest-status">□</span>
+              <div class="quest-main">
+                <div class="quest-title">Perceber que esta lista de quests não está completa</div>
+                <div class="quest-meta">
+                  &nbsp;→ sim, é exatamente o que você está pensando.
+                </div>
+              </div>
+              <span class="quest-emoji">🧬</span>
+            </li>
+          </ul>
+        </section>
+
+        <section class="console" aria-label="console virtual">
+          <div class="console-header">
+            <div class="console-dots">
+              <span class="console-dot"></span>
+              <span class="console-dot"></span>
+              <span class="console-dot"></span>
+            </div>
+            <div class="console-title">devtools-feed // read only</div>
+          </div>
+          <div class="console-body" id="console-body">
+            <div class="console-line">
+              <span class="console-prefix">[00:00:00]</span>
+              <span class="console-info">info</span>
+              <span>carregando dev shrine...</span>
+            </div>
+            <div class="console-line">
+              <span class="console-prefix">[00:00:01]</span>
+              <span class="console-secret">hint</span>
+              <span>abra o console real do navegador para ver o outro lado.</span>
+            </div>
+            <div class="console-line">
+              <span class="console-prefix">[00:00:02]</span>
+              <span class="console-hint">tip</span>
+              <span>alguns segredos só são revelados para quem escuta o teclado.</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="root-mode" id="root-mode">
+          <div class="root-mode-inner">
+            <div class="root-mode-line">
+              <span class="root-mode-prefix">[root@dev-shrine]</span>
+              <span class="root-mode-warning">Você desbloqueou o Modo Raiz.</span>
+            </div>
+            <div class="root-mode-line">
+              <span class="root-mode-prefix">[careful]</span>
+              <span>Agora você sabe que <strong>esta página sempre soube que você é dev</strong>.</span>
+            </div>
+            <div class="root-mode-line">
+              <span class="root-mode-prefix">[next]</span>
+              <span class="root-mode-hint">Para provar, procure a string "you-are-the-easter-egg" no HTML.</span>
+            </div>
+          </div>
+        </section>
+
+        <p class="hint-mini">
+          <strong>Modo viral:</strong> se você for gravar um react, experimente pausar em cada animação e
+          tentar adivinhar <code>data-*</code> suspeitos antes de abrir o inspetor.
+        </p>
+      </div>
+    </aside>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <span class="toast-pill"></span>
+    <span id="toast-text">quest concluída</span>
+  </div>
+
+  <!-- 
+    🧠 META-QUEST (apenas para quem lê HTML):
+    Se você chegar ao ponto de entender todos os easter eggs, comente em algum lugar:
+    "A página não tinha bug. Ela só estava logando a minha curiosidade."
+  -->
+
+  <script>
+    (function() {
+      const typerPhrases = [
+        'console.log("não confie em UIs muito calmas...");',
+        '/* dica: sempre há mais coisa em data-* do que parece. */',
+        'Object.keys(window).filter(k => k.includes("portal"))',
+        'if (você.lerHTML) então → novoEasterEgg();',
+        'You are not debugging the page. The page is debugging you.',
+        'try { help() } catch (e) { console.info("talvez já esteja definido..."); }',
+        'TL;DR: esta página é um playground para dev que gosta de investigar.',
+        'New quest discovered: document.body.addEventListener("keydown", ...)',
+        'while(true){ coffee && newBug(); }',
+        'Tudo que é mágico para leigos é debuggável para devs.'
+      ];
+
+      const consoleBody = document.getElementById('console-body');
+      const typerTextEl = document.getElementById('typer-text');
+      const toastEl = document.getElementById('toast');
+      const toastTextEl = document.getElementById('toast-text');
+      const heroTitle = document.getElementById('hero-title');
+      const hunterSwitch = document.getElementById('hunter-switch');
+      const questsListEl = document.getElementById('quests-list');
+      const questsProgressEl = document.getElementById('quests-progress');
+      const btnStart = document.getElementById('btn-start');
+      const btnSpoiler = document.getElementById('btn-spoiler');
+      const heroRun = document.getElementById('hero-run');
+      const heroBreak = document.getElementById('hero-break');
+      const creditTime = document.getElementById('credit-time');
+      const rootModeEl = document.getElementById('root-mode');
+      const debugLabEl = document.getElementById('debug-lab');
+      const portalOverlay = document.getElementById('portal-overlay');
+      const portalSeed = document.getElementById('portal-seed');
+      const portalStatus = document.getElementById('portal-status');
+      const portalCloseBtn = document.getElementById('portal-close-btn');
+
+      const heroTitleGlitch = heroTitle.querySelector('.hero-title-glitch');
+
+      const KONAMI = [38,38,40,40,37,39,37,39,66,65];
+      let konamiIndex = 0;
+      let typedSecret = '';
+      const SECRET_WORD_DEBUG = 'debug';
+      const SECRET_WORD_ROOT = 'root';
+      let titleClickCount = 0;
+      let titleClickTimer = null;
+
+      const QUEST_IDS = [
+        'start',
+        'console',
+        'debug',
+        'konami',
+        'secret-title',
+        'portal',
+        'hunter'
+      ];
+
+      const STORAGE_KEY = 'dev-shrine-quests-v1';
+
+      /* Utilities */
+
+      function pad(num) {
+        return num.toString().padStart(2, '0');
+      }
+
+      function nowTime() {
+        const d = new Date();
+        return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+      }
+
+      function logToVirtualConsole(type, message) {
+        const line = document.createElement('div');
+        line.className = 'console-line';
+        const prefix = document.createElement('span');
+        prefix.className = 'console-prefix console-time';
+        prefix.textContent = '[' + nowTime() + ']';
+
+        const kind = document.createElement('span');
+        if (type === 'info') kind.className = 'console-info';
+        else if (type === 'warn') kind.className = 'console-warn';
+        else if (type === 'secret') kind.className = 'console-secret';
+        else if (type === 'hint') kind.className = 'console-hint';
+        else kind.className = '';
+
+        kind.textContent = type;
+        const text = document.createElement('span');
+        text.textContent = message;
+
+        line.appendChild(prefix);
+        line.appendChild(kind);
+        line.appendChild(text);
+
+        consoleBody.appendChild(line);
+        consoleBody.scrollTop = consoleBody.scrollHeight;
+      }
+
+      function showToast(message, isHidden) {
+        toastTextEl.textContent = message;
+        toastEl.classList.toggle('toast-hidden', !!isHidden);
+        toastEl.classList.add('visible');
+        clearTimeout(showToast._timeout);
+        showToast._timeout = setTimeout(() => {
+          toastEl.classList.remove('visible');
+        }, 2600);
+      }
+
+      function loadQuestState() {
+        let raw = null;
+        try {
+          raw = localStorage.getItem(STORAGE_KEY);
+        } catch (e) {}
+        if (!raw) return {};
+        try {
+          const parsed = JSON.parse(raw);
+          return parsed && typeof parsed === 'object' ? parsed : {};
+        } catch (e) {
+          return {};
+        }
+      }
+
+      function saveQuestState(state) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (e) {}
+      }
+
+      const questState = loadQuestState();
+
+      function completeQuest(id, options = {}) {
+        if (!QUEST_IDS.includes(id)) return;
+        if (questState[id]) return;
+
+        questState[id] = true;
+        saveQuestState(questState);
+
+        const item = questsListEl.querySelector('[data-quest-id="' + id + '"]');
+        if (item) {
+          item.classList.add('completed');
+          const status = item.querySelector('.quest-status');
+          if (status) status.textContent = '✔';
+        }
+
+        updateQuestProgress();
+
+        if (!options.silent) {
+          showToast('Quest concluída: ' + id, options.hidden);
+          logToVirtualConsole(
+            'info',
+            'quest "' + id + '" marcada como concluída.'
+          );
+        }
+      }
+
+      function updateQuestProgress() {
+        let completed = 0;
+        QUEST_IDS.forEach(id => {
+          if (questState[id]) completed++;
+        });
+        questsProgressEl.textContent = completed + ' / ' + QUEST_IDS.length + ' completos';
+      }
+
+      function restoreQuestUIFromState() {
+        QUEST_IDS.forEach(id => {
+          if (questState[id]) {
+            const item = questsListEl.querySelector('[data-quest-id="' + id + '"]');
+            if (item) {
+              item.classList.add('completed');
+              const status = item.querySelector('.quest-status');
+              if (status) status.textContent = '✔';
+            }
+          }
+        });
+
+        if (questState['konami']) {
+          rootModeEl.style.display = 'block';
+        }
+        if (questState['debug']) {
+          debugLabEl.style.display = 'block';
+        }
+        if (questState['hunter']) {
+          hunterSwitch.classList.add('on');
+          hunterSwitch.setAttribute('aria-checked', 'true');
+          document.body.style.cursor = 'crosshair';
+        }
+      }
+
+      function initTyper() {
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let typing = true;
+
+        function tick() {
+          const phrase = typerPhrases[phraseIndex];
+          if (typing) {
+            charIndex++;
+            typerTextEl.textContent = phrase.slice(0, charIndex);
+            if (charIndex >= phrase.length) {
+              typing = false;
+              setTimeout(tick, 1200);
+              return;
+            }
+            setTimeout(tick, 35 + Math.random() * 40);
+          } else {
+            charIndex--;
+            typerTextEl.textContent = phrase.slice(0, charIndex);
+            if (charIndex <= 0) {
+              typing = true;
+              phraseIndex = (phraseIndex + 1) % typerPhrases.length;
+              setTimeout(tick, 400);
+              return;
+            }
+            setTimeout(tick, 18 + Math.random() * 40);
+          }
+        }
+
+        tick();
+      }
+
+      function initTime() {
+        function update() {
+          creditTime.textContent = nowTime();
+        }
+        update();
+        setInterval(update, 1000);
+      }
+
+      function initHeroButtons() {
+        btnStart.addEventListener('click', () => {
+          completeQuest('start');
+          showToast('Bem-vindo ao dev shrine. Abra o console.', false);
+          logToVirtualConsole('info', 'puzzle iniciado. boa sorte.');
+        });
+
+        heroRun.addEventListener('click', () => {
+          logToVirtualConsole('info', 'simulação visual intensificada.');
+          document.body.style.overflowY = 'auto';
+        });
+
+        heroBreak.addEventListener('click', () => {
+          logToVirtualConsole('warn', 'tentando quebrar a realidade...');
+          setTimeout(() => {
+            logToVirtualConsole('secret', 'spoiler: a realidade já estava quebrada.');
+          }, 600);
+        });
+
+        btnSpoiler.addEventListener('click', () => {
+          logToVirtualConsole(
+            'hint',
+            'sem spoilers, só vibes: use help() no console quando travar.'
+          );
+        });
+      }
+
+      function initHeroTitleGlitch() {
+        heroTitle.addEventListener('click', () => {
+          titleClickCount++;
+          if (titleClickTimer) clearTimeout(titleClickTimer);
+          titleClickTimer = setTimeout(() => {
+            titleClickCount = 0;
+          }, 600);
+
+          heroTitleGlitch.classList.remove('active');
+          void heroTitleGlitch.offsetWidth;
+          heroTitleGlitch.classList.add('active');
+
+          if (titleClickCount >= 3) {
+            completeQuest('secret-title');
+          }
+        });
+      }
+
+      function initHunterMode() {
+        hunterSwitch.addEventListener('click', () => {
+          const isOn = hunterSwitch.classList.toggle('on');
+          hunterSwitch.setAttribute('aria-checked', isOn ? 'true' : 'false');
+          document.body.style.cursor = isOn ? 'crosshair' : 'default';
+          if (isOn) {
+            completeQuest('hunter');
+            showToast('Modo caçador ativado. data-* suspeitos +20%', false);
+          } else {
+            showToast('Modo caçador desativado. Você ainda pode achar segredos.', false);
+          }
+        });
+      }
+
+      function initKeyboard() {
+        window.addEventListener('keydown', (event) => {
+          const key = event.key;
+          const code = event.keyCode || event.which;
+
+          if (code === KONAMI[konamiIndex]) {
+            konamiIndex++;
+            if (konamiIndex === KONAMI.length) {
+              konamiIndex = 0;
+              if (rootModeEl.style.display !== 'block') {
+                rootModeEl.style.display = 'block';
+                showToast('Modo Raiz desbloqueado.', true);
+                completeQuest('konami');
+              }
+            }
+          } else {
+            if (![16,17,18].includes(code)) {
+              konamiIndex = 0;
+            }
+          }
+
+          if (key.length === 1) {
+            typedSecret = (typedSecret + key.toLowerCase()).slice(-Math.max(SECRET_WORD_DEBUG.length, SECRET_WORD_ROOT.length));
+
+            if (typedSecret.endsWith(SECRET_WORD_DEBUG)) {
+              debugLabEl.style.display = 'block';
+              completeQuest('debug');
+              logToVirtualConsole('hint', 'Debug Lab revelado. Bons traces.');
+            } else if (typedSecret.endsWith(SECRET_WORD_ROOT)) {
+              logToVirtualConsole('hint', 'root? veja o Modo Raiz com o Konami code.');
+            }
+          }
+        });
+      }
+
+      function initPortal() {
+        const seed = Math.floor(Math.random() * 0xffff).toString(16).padStart(4, '0');
+        portalSeed.textContent = '0x' + seed;
+
+        portalCloseBtn.addEventListener('click', () => {
+          portalOverlay.classList.remove('visible');
+        });
+
+        portalOverlay.addEventListener('click', (e) => {
+          if (e.target === portalOverlay) {
+            portalOverlay.classList.remove('visible');
+          }
+        });
+
+        window.portal = function portal() {
+          portalStatus.textContent = '[ ok ] portal aberto ' + nowTime();
+          portalOverlay.classList.add('visible');
+          completeQuest('portal', { hidden: true });
+          showToast('Portal aberto. Alguns devs chamam isso de trap.', true);
+          logToVirtualConsole('secret', 'portal() foi executado. dev tentando trapacear? aprovado.');
+        };
+      }
+
+      function initConsoleHelpers() {
+        const ascii = [
+          '  ____            ____       __         ',
+          ' / __ \\___  ____/ / /____ _/ /____  ___',
+          '/ / / / _ \\/ __  / __/ _ `/ __/ _ \\/ _ \\',
+          '/_/ /_/ .__/\\_,_/\\__/\\_,_/\\__/\\___/_//_/',
+          '     /_/  dev shrine – a página que debuga você'
+        ].join('\n');
+
+        function help() {
+          const msgs = [
+            'help() → lista de comandos especiais:',
+            '  • help()     → mostra esta ajuda',
+            '  • portal()   → abre um overlay secreto + marca uma quest',
+            '  • quests()   → mostra o estado atual das quests',
+            '  • shrine()   → imprime um pequeno ascii art',
+            '  • hint()     → dicas soft sobre onde procurar segredos',
+            '',
+            'Dica: também existem segredos acionados por teclado (sem console).'
+          ];
+          msgs.forEach((m, idx) => {
+            setTimeout(() => console.log('%c' + m, 'color:#38bdf8;font-family:monospace;'), idx * 30);
+          });
+          completeQuest('console');
+          return 'continue explorando.';
+        }
+
+        function shrine() {
+          console.log('%c' + ascii, 'color:#a855f7;font-family:monospace;');
+          return 'ok, agora você oficialmente viu o shrine.';
+        }
+
+        function hint() {
+          console.info('%cHINT 1%c: clique 3x no título principal.', 'color:#22c55e;font-weight:bold;', 'color:#e5e7eb;');
+          console.info('%cHINT 2%c: existe um laboratório de debug destrancado pela palavra "debug" digitada.', 'color:#22c55e;font-weight:bold;', 'color:#e5e7eb;');
+          console.info('%cHINT 3%c: um código clássico de videogame libera o Modo Raiz.', 'color:#22c55e;font-weight:bold;', 'color:#e5e7eb;');
+          console.info('%cHINT 4%c: procure por atributos data-ghost e data-*.', 'color:#22c55e;font-weight:bold;', 'color:#e5e7eb;');
+          return 'isso é tudo que o oráculo pode dizer por enquanto.';
+        }
+
+        function quests() {
+          const snapshot = {};
+          QUEST_IDS.forEach(id => {
+            snapshot[id] = !!questState[id];
+          });
+          console.table(snapshot);
+          return snapshot;
+        }
+
+        window.help = help;
+        window.shrine = shrine;
+        window.hint = hint;
+        window.quests = quests;
+
+        console.log('%c👋 Olá, dev curioso.', 'color:#38bdf8;font-size:13px;font-family:system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text";');
+        console.log('%chelp()%c para descobrir o que esta página espera de você.', 'color:#a855f7;font-family:monospace;', 'color:#e5e7eb;font-family:monospace;');
+      }
+
+      function initTitleActivity() {
+        const originalTitle = document.title;
+        let away = false;
+        window.addEventListener('blur', () => {
+          away = true;
+          document.title = '👀 A página ainda está rodando...';
+        });
+        window.addEventListener('focus', () => {
+          if (away) {
+            document.title = '✔ Você voltou – Dev Shrine';
+            setTimeout(() => {
+              document.title = originalTitle;
+            }, 1800);
+          }
+          away = false;
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        restoreQuestUIFromState();
+        updateQuestProgress();
+        initTyper();
+        initTime();
+        initHeroButtons();
+        initHeroTitleGlitch();
+        initHunterMode();
+        initKeyboard();
+        initPortal();
+        initConsoleHelpers();
+        initTitleActivity();
+        logToVirtualConsole('info', 'dev shrine pronto. help() disponível no console.');
+      });
+    })();
+  </script>
+
+  <script>
+!function(){var d=document,w=window,QK="dev-shrine-quests-v1",AK="dev-shrine-ascended-v1",style=d.createElement("style"),css="@keyframes trailFade{0%{transform:translate3d(0,0,0) scale(1);opacity:.9}100%{transform:translate3d(0,-18px,0) scale(.7);opacity:0}}#trail-layer{position:fixed;inset:0;pointer-events:none;z-index:80} .trail-char{position:absolute;font-family:ui-monospace,system-ui,monospace;font-size:10px;color:rgba(148,163,184,.9);text-shadow:0 0 10px rgba(56,189,248,.8);animation:trailFade .9s ease-out forwards;will-change:transform,opacity}@keyframes xscan{0%{top:0}100%{top:100%}}#xray-overlay{position:fixed;inset:0;z-index:90;pointer-events:none;mix-blend-mode:screen;opacity:0;transition:opacity .2s ease}#xray-overlay.visible{opacity:1}#xray-overlay::before{content:\"\";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(56,189,248,.18),transparent 40%,transparent 60%,rgba(168,85,247,.2));mix-blend-mode:soft-light} .xray-box{position:absolute;border:1px solid rgba(56,189,248,.9);box-shadow:0 0 18px rgba(56,189,248,.8);border-radius:8px;background:linear-gradient(135deg,rgba(15,23,42,.2),rgba(15,23,42,.95))} .xray-label{position:absolute;top:-14px;left:0;font-family:ui-monospace,system-ui,monospace;font-size:9px;padding:1px 6px;border-radius:999px;background:rgba(15,23,42,.98);border:1px solid rgba(56,189,248,.9);color:#e5e7eb;white-space:nowrap}#xray-headline{position:absolute;top:10px;left:50%;transform:translateX(-50%);font-family:ui-monospace,system-ui,monospace;font-size:11px;padding:3px 10px;border-radius:999px;border:1px solid rgba(148,163,184,.7);background:rgba(15,23,42,.98);color:#e5e7eb;box-shadow:0 10px 40px rgba(15,23,42,1)}#xray-scanline{position:absolute;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(56,189,248,.9),transparent);opacity:.7;animation:xscan 2.6s linear infinite}#ascension-overlay{position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 10% 0,rgba(56,189,248,.25),rgba(15,23,42,.98));backdrop-filter:blur(26px) saturate(170%);transition:opacity .4s ease;opacity:0;pointer-events:none}#ascension-overlay.visible{opacity:1;pointer-events:auto}#ascension-inner{max-width:520px;margin:0 18px;border-radius:20px;border:1px solid rgba(148,163,184,.6);background:rgba(15,23,42,.96);box-shadow:0 26px 90px rgba(15,23,42,1);padding:20px 22px;font-family:ui-monospace,system-ui,monospace;font-size:12px;color:#e5e7eb;position:relative;overflow:hidden}#ascension-inner::before{content:\"\";position:absolute;inset:-20%;background:radial-gradient(circle at 0 0,rgba(56,189,248,.35),transparent 55%),radial-gradient(circle at 100% 100%,rgba(168,85,247,.35),transparent 55%);mix-blend-mode:soft-light;opacity:.75}#ascension-content{position:relative;z-index:1}#ascension-badge{font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:#38bdf8;margin-bottom:5px}#ascension-title{font-size:16px;margin-bottom:6px}#ascension-text{white-space:pre-line;color:#e5e7eb;opacity:.92}#ascension-close{margin-top:10px;font-size:11px;border-radius:999px;border:1px solid rgba(148,163,184,.75);background:rgba(15,23,42,.98);color:#e5e7eb;padding:4px 10px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;position:relative;z-index:1}#ascension-close span:last-child{font-size:14px}",trailLayer,xrayOverlay,xrayOn=!1,ascShown=!1;style.textContent=css;d.head.appendChild(style);function gState(){try{var s=localStorage.getItem(QK);return s?JSON.parse(s):{}}catch(e){return{}}}function allDone(st){for(var ids=["start","console","debug","konami","secret-title","portal","hunter"],i=0;i<ids.length;i++)if(!st[ids[i]])return!1;return!0}function mkTrailLayer(){trailLayer||(trailLayer=d.createElement("div"),trailLayer.id="trail-layer",d.body.appendChild(trailLayer))}function initTrail(){mkTrailLayer();var chars=["0","1","{","}","<",">","/","\\"],last=0;w.addEventListener("mousemove",function(e){var now=Date.now();if(now-last<28)return;last=now;var s=d.createElement("span");s.className="trail-char",s.textContent=chars[Math.floor(Math.random()*chars.length)],s.style.left=e.clientX+"px",s.style.top=e.clientY+"px",trailLayer.appendChild(s),setTimeout(function(){s&&s.parentNode&&s.parentNode.removeChild(s)},950)},{passive:!0})}function buildXray(){xrayOverlay||(xrayOverlay=d.createElement("div"),xrayOverlay.id="xray-overlay",d.body.appendChild(xrayOverlay));xrayOverlay.innerHTML="";var headline=d.createElement("div");headline.id="xray-headline",headline.textContent="XRAY MODE – dataset() overlay (Ctrl+Shift+X para sair)";var scan=d.createElement("div");scan.id="xray-scanline",xrayOverlay.appendChild(headline),xrayOverlay.appendChild(scan);for(var els=d.querySelectorAll("*"),i=0;i<els.length;i++){var el=els[i],ds=el.dataset;if(!ds)continue;var keys=Object.keys(ds);if(!keys.length)continue;var r=el.getBoundingClientRect();if(!r.width||!r.height)continue;var box=d.createElement("div");box.className="xray-box",box.style.left=r.left+"px",box.style.top=r.top+"px",box.style.width=r.width+"px",box.style.height=r.height+"px";var label=d.createElement("div");label.className="xray-label",label.textContent=keys.join(",");box.appendChild(label),xrayOverlay.appendChild(box)}}function toggleXray(){xrayOn=!xrayOn,xrayOn?(buildXray(),xrayOverlay.classList.add("visible"),console.info("%cXRAY MODE ON%c – Ctrl+Shift+X para desligar.","color:#38bdf8;font-weight:bold;","color:#e5e7eb;")):(xrayOverlay&&xrayOverlay.classList.remove("visible"),console.info("%cXRAY MODE OFF","color:#6b7280;"))}function initXrayShortcut(){w.addEventListener("keydown",function(e){if(e.ctrlKey&&e.shiftKey&&("x"===e.key||"X"===e.key))e.preventDefault(),toggleXray()})}function makeAscensionOverlay(){var ov=d.createElement("div");ov.id="ascension-overlay";var inner=d.createElement("div");inner.id="ascension-inner";var content=d.createElement("div");content.id="ascension-content";var badge=d.createElement("div");badge.id="ascension-badge",badge.textContent="100% QUEST CLEAR";var title=d.createElement("div");title.id="ascension-title",title.textContent="Você acabou de zerar esta página.";var text=d.createElement("div");text.id="ascension-text";var btn=d.createElement("button");btn.id="ascension-close",btn.innerHTML="<span>voltar para a interface mortal</span><span>↩</span>",btn.addEventListener("click",function(){ov.classList.remove("visible")}),content.appendChild(badge),content.appendChild(title),content.appendChild(text),inner.appendChild(content),inner.appendChild(btn),ov.appendChild(inner),d.body.appendChild(ov),setTimeout(function(){ov.classList.add("visible")},30);return text}function showAscension(){if(ascShown)return;ascShown=!0;try{localStorage.setItem(AK,"1")}catch(e){};var textEl=makeAscensionOverlay(),msg=[ "Parabéns, dev.","","Você destravou todas as quests, quebrou todos os códigos e atravessou todos os overlays.","","A partir deste ponto, a página oficialmente assume que","você não é apenas visitante: é parte do lore.","","Se estiver gravando um vídeo, este é o momento perfeito para pausar,","olhar para a câmera e contar quantos segredos você tinha encontrado","antes de o Modo Ascensão aparecer sozinho.","","Meta-final: em algum lugar do seu código, comentário ou tweet, escreva:","\"A página não tinha bug. Ela só estava logando a minha curiosidade.\"","","Obrigado por jogar com o Dev Shrine.", "", "Spoiler: Não acabou nada!"].join("\n"),i=0,buf="";(function type(){buf+=msg.charAt(i)||"";textEl.textContent=buf,i++,i<=msg.length&&setTimeout(type,14+Math.random()*25)})()}function checkAscension(){var st=gState();if(!allDone(st))return;try{if(localStorage.getItem(AK))return}catch(e){}showAscension()}function initAscensionWatcher(){checkAscension();setInterval(checkAscension,2500)};initTrail();initXrayShortcut();initAscensionWatcher();console.log("%c✨ Extra layer carregado: XRAY MODE + Ascension + cursor-trail.","color:#a855f7;font-family:monospace;")}();
+</script>
+
+<script>
+!function(){var d=document,w=window,HK="dev-shrine-hidden-quests-v1",state=(function(){try{var r=localStorage.getItem(HK);return r?JSON.parse(r):{}}catch(e){return{}}})(),toast=d.getElementById("toast"),toastTxt=d.getElementById("toast-text"),toastTimer=null;function save(){try{localStorage.setItem(HK,JSON.stringify(state))}catch(e){}}function showHiddenToast(msg,silent){if(silent)return; if(!toast||!toastTxt){console.info("[hidden-quest] "+msg);return;}toastTxt.textContent=msg;toast.classList.add("visible");clearTimeout(toastTimer);toastTimer=setTimeout(function(){toast.classList.remove("visible")},2300)}function unlock(id,opt){opt=opt||{};if(state[id])return;state[id]={t:Date.now()};save();var label=""+id;console.log("%c[hidden quest]%c "+label,"color:#a855f7;font-family:monospace;","color:#e5e7eb;font-family:monospace;");showHiddenToast("Hidden quest: "+label+" ✓",opt.silent);checkChain()}function countCore(){var core=["idle","tab-dance","night-owl","scroll-end","inspect"],c=0;for(var i=0;i<core.length;i++)if(state[core[i]])c++;return c}function checkChain(){if(state["overachiever"])return;if(countCore()>=4)unlock("overachiever",{silent:!1})}w.hiddenQuests=function(){console.table(state);return state};console.log("%c🔒 Hidden quests carregadas. Use hiddenQuests() no console para inspecionar.","color:#a855f7;font-family:monospace;");var lastActivity=Date.now(),idleDone=!!state["idle"],idleTimer=setInterval(function(){if(idleDone)return clearInterval(idleTimer);if(Date.now()-lastActivity>45e3){idleDone=!0;unlock("idle",{silent:!1})}},5e3);["mousemove","keydown","scroll"].forEach(function(ev){w.addEventListener(ev,function(){lastActivity=Date.now()},{passive:!0})});(function(){var h=(new Date).getHours();if(h<5&&!state["night-owl"])unlock("night-owl",{silent:!0})})();var blurFlag=!1,tabDone=!!state["tab-dance"],tabCount=0;w.addEventListener("blur",function(){blurFlag=!0});w.addEventListener("focus",function(){if(!blurFlag||tabDone)return;blurFlag=!1;tabCount++;if(tabCount>=4&&!tabDone){tabDone=!0;unlock("tab-dance",{silent:!1})}});var scrollDone=!!state["scroll-end"];w.addEventListener("scroll",function(){if(scrollDone)return;var doc=d.documentElement,atBottom=w.innerHeight+w.scrollY>=doc.scrollHeight-4;if(atBottom){scrollDone=!0;unlock("scroll-end",{silent:!1})}},{passive:!0});var inspectDone=!!state["inspect"];w.addEventListener("keydown",function(e){if(inspectDone)return;var k=e.key||"";if(k==="F12"||(e.ctrlKey&&e.shiftKey&&k.toLowerCase()==="i")||(e.metaKey&&e.altKey&&k.toLowerCase()==="i")){inspectDone=!0;unlock("inspect",{silent:!1})}});setTimeout(function(){checkChain()},1e3)}();
+</script>
+
+<script>
+(function(){
+  var d=document,w=window;
+  function ready(fn){
+    if(d.readyState==="loading") d.addEventListener("DOMContentLoaded",fn);
+    else fn();
+  }
+
+  ready(function(){
+    var hunterSwitch=d.getElementById("hunter-switch");
+    if(!hunterSwitch){
+      console.warn("[hunter-amp] hunter-switch não encontrado. script ignorado.");
+      return;
+    }
+
+    var style=d.createElement("style");
+    style.textContent=`
+#hunter-hud{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:88;
+  opacity:0;
+  transition:opacity .25s ease;
+  mix-blend-mode:screen;
+}
+#hunter-hud.visible{
+  opacity:1;
+}
+#hunter-hud-radar{
+  position:absolute;
+  bottom:14px;
+  right:16px;
+  width:170px;
+  height:170px;
+  border-radius:999px;
+  border:1px solid rgba(56,189,248,0.7);
+  background:
+    radial-gradient(circle at 50% 50%,rgba(15,23,42,1),rgba(15,23,42,0.3)),
+    radial-gradient(circle at 50% 50%,rgba(56,189,248,0.34),transparent 60%);
+  box-shadow:0 16px 40px rgba(15,23,42,1);
+  overflow:hidden;
+}
+#hunter-hud-radar::before{
+  content:"";
+  position:absolute;
+  inset:22%;
+  border-radius:999px;
+  border:1px dashed rgba(148,163,184,0.6);
+}
+#hunter-hud-radar::after{
+  content:"";
+  position:absolute;
+  inset:-40%;
+  background:conic-gradient(
+    rgba(56,189,248,0.9),
+    rgba(168,85,247,0.4),
+    rgba(15,23,42,0.1),
+    rgba(15,23,42,0.0)
+  );
+  mix-blend-mode:screen;
+  animation:hunterSweep 3s linear infinite;
+}
+@keyframes hunterSweep{
+  from{ transform:rotate(0deg); }
+  to{ transform:rotate(360deg); }
+}
+.hunter-hud-dots{
+  position:absolute;
+  inset:0;
+}
+.hunter-hud-dot{
+  position:absolute;
+  width:6px;
+  height:6px;
+  border-radius:999px;
+  background:radial-gradient(circle at 30% 30%,#e5e7eb,#38bdf8);
+  box-shadow:0 0 12px rgba(56,189,248,0.9);
+  opacity:.9;
+}
+.hunter-hud-dot.primary{
+  width:8px;
+  height:8px;
+  box-shadow:0 0 16px rgba(248,250,252,1);
+}
+#hunter-hud-label{
+  position:absolute;
+  bottom:18px;
+  right:16px;
+  transform:translateY(-100%);
+  font-family:ui-monospace,system-ui,monospace;
+  font-size:10px;
+  padding:3px 9px;
+  border-radius:999px;
+  border:1px solid rgba(148,163,184,0.7);
+  background:rgba(15,23,42,0.98);
+  color:#e5e7eb;
+}
+#hunter-hotcold{
+  position:fixed;
+  pointer-events:none;
+  z-index:89;
+  font-family:ui-monospace,system-ui,monospace;
+  font-size:11px;
+  padding:4px 9px;
+  border-radius:999px;
+  border:1px solid rgba(56,189,248,0.8);
+  background:rgba(15,23,42,0.96);
+  color:#e5e7eb;
+  box-shadow:0 12px 40px rgba(15,23,42,1);
+  opacity:0;
+  transform:translate(-50%, -50%) scale(.92);
+  transition:opacity .18s ease, transform .18s ease, border-color .18s ease;
+}
+#hunter-hotcold.visible{
+  opacity:1;
+  transform:translate(-50%, -50%) scale(1);
+}
+#hunter-hotcold[data-level="cold"]{ border-color:rgba(148,163,184,0.7); }
+#hunter-hotcold[data-level="warm"]{ border-color:rgba(251,191,36,0.9); }
+#hunter-hotcold[data-level="hot"]{ border-color:rgba(248,113,113,0.95); }
+#hunter-hotcold[data-level="lock"]{ border-color:rgba(34,197,94,0.95); }
+#hunter-hotcold span.level{
+  margin-right:5px;
+}
+#hunter-hotcold span.hint{
+  color:rgba(148,163,184,0.9);
+}
+.hunter-targeted{
+  outline:1px solid rgba(56,189,248,0.9) !important;
+  box-shadow:0 0 0 1px rgba(15,23,42,1),0 0 22px rgba(56,189,248,0.9) !important;
+  position:relative;
+}
+.hunter-targeted::after{
+  content:"LOCK";
+  position:absolute;
+  top:-12px;
+  right:4px;
+  font-family:ui-monospace,system-ui,monospace;
+  font-size:9px;
+  padding:1px 6px;
+  border-radius:999px;
+  border:1px solid rgba(56,189,248,0.9);
+  background:rgba(15,23,42,0.98);
+  color:#e5e7eb;
+}
+@media (max-width:600px){
+  #hunter-hud-radar{
+    width:140px;
+    height:140px;
+  }
+}
+    `;
+    d.head.appendChild(style);
+
+    var hud=d.createElement("div");
+    hud.id="hunter-hud";
+    hud.innerHTML=`
+      <div id="hunter-hud-radar">
+        <div class="hunter-hud-dots" id="hunter-hud-dots"></div>
+      </div>
+      <div id="hunter-hud-label">hunter HUD // sinal de easter eggs</div>
+    `;
+    d.body.appendChild(hud);
+
+    var hotcold=d.createElement("div");
+    hotcold.id="hunter-hotcold";
+    hotcold.innerHTML='<span class="level">cold</span><span class="hint">nenhum segredo por perto...</span>';
+    d.body.appendChild(hotcold);
+
+    var SECRET_SELECTORS=[
+      "[data-ghost]",
+      "[data-hint]",
+      ".pseudo-link",
+      ".lab-hex-cell",
+      ".lab-code",
+      ".hero-title",
+      ".quest-item[data-quest-id='secret-title']",
+      "#debug-lab-inner",
+      "#root-mode"
+    ];
+
+    var targets=[], mousePos={x:0,y:0}, mmHandler=null, rsHandler=null, scHandler=null;
+    var lastNearest=null;
+
+    function collectTargets(){
+      targets=[];
+      var els=[];
+      SECRET_SELECTORS.forEach(function(sel){
+        d.querySelectorAll(sel).forEach(function(el){
+          if(els.indexOf(el)===-1) els.push(el);
+        });
+      });
+      els.forEach(function(el){
+        var r=el.getBoundingClientRect();
+        if(!r.width || !r.height) return;
+        var cx=r.left+r.width/2, cy=r.top+r.height/2;
+        var hint=el.dataset.hint || el.dataset.ghost || el.getAttribute("aria-label") || el.id || el.className || el.tagName;
+        targets.push({el:el,x:cx,y:cy,hint:(""+hint).slice(0,60)});
+      });
+      renderDots();
+    }
+
+    function renderDots(){
+      var dotsContainer=d.getElementById("hunter-hud-dots");
+      if(!dotsContainer) return;
+      dotsContainer.innerHTML="";
+      var radar=d.getElementById("hunter-hud-radar");
+      if(!radar) return;
+      var rb=radar.getBoundingClientRect();
+      targets.forEach(function(t,i){
+        // normaliza posição do alvo na tela para dentro do radar (0-1)
+        var nx=(t.x/window.innerWidth)-0.5;
+        var ny=(t.y/window.innerHeight)-0.5;
+        var radius=Math.min(rb.width,rb.height)/2-10;
+        var dx=nx*radius*2;
+        var dy=ny*radius*2;
+        var dot=d.createElement("div");
+        dot.className="hunter-hud-dot";
+        dot.style.left=(rb.width/2+dx-3)+"px";
+        dot.style.top=(rb.height/2+dy-3)+"px";
+        dot.dataset.index=i;
+        dotsContainer.appendChild(dot);
+      });
+    }
+
+    function distance(a,b){var dx=a.x-b.x,dy=a.y-b.y;return Math.sqrt(dx*dx+dy*dy);}
+
+    function updateHotCold(){
+      if(!targets.length) return;
+      var nearest=null, best=1e9;
+      var mp={x:mousePos.x,y:mousePos.y};
+      targets.forEach(function(t,i){
+        var r=t.el.getBoundingClientRect();
+        var cx=r.left+r.width/2, cy=r.top+r.height/2;
+        t.x=cx; t.y=cy;
+        var dist=distance(mp,t);
+        if(dist<best){best=dist;nearest={t:t,idx:i,dist:dist};}
+      });
+      if(!nearest) return;
+
+      var level,label,hintText;
+      if(best>260){ level="cold"; label="cold"; hintText="nenhum segredo por perto..."; }
+      else if(best>150){ level="warm"; label="warm"; hintText="você está na direção certa."; }
+      else if(best>80){ level="hot"; label="hot"; hintText="segredos detectados nas proximidades."; }
+      else { level="lock"; label="LOCK"; hintText="pare de mexer e inspecione este trecho da UI."; }
+
+      hotcold.dataset.level=level;
+      hotcold.querySelector(".level").textContent=label;
+      hotcold.querySelector(".hint").textContent=hintText;
+
+      // posiciona o indicador perto do mouse
+      hotcold.style.left=mousePos.x+"px";
+      hotcold.style.top=mousePos.y-24+"px";
+
+      if(!hotcold.classList.contains("visible")){
+        hotcold.classList.add("visible");
+      }
+
+      // marca o alvo mais próximo no DOM
+      if(lastNearest && lastNearest.t && lastNearest.t.el && lastNearest.t.el!==nearest.t.el){
+        lastNearest.t.el.classList.remove("hunter-targeted");
+      }
+      nearest.t.el.classList.add("hunter-targeted");
+      lastNearest=nearest;
+
+      // destaca o dot correspondente no radar
+      var dots=d.querySelectorAll(".hunter-hud-dot");
+      dots.forEach(function(dot){
+        dot.classList.remove("primary");
+      });
+      var dotsContainer=d.getElementById("hunter-hud-dots");
+      if(dotsContainer){
+        var targetDot=dotsContainer.querySelector('.hunter-hud-dot[data-index="'+nearest.idx+'"]');
+        if(targetDot) targetDot.classList.add("primary");
+      }
+    }
+
+    function onMouseMove(e){
+      mousePos.x=e.clientX;
+      mousePos.y=e.clientY;
+      updateHotCold();
+    }
+    function onResizeOrScroll(){
+      collectTargets();
+      updateHotCold();
+    }
+
+    function enableHunterHUD(){
+      collectTargets();
+      var hudEl=d.getElementById("hunter-hud");
+      if(hudEl) hudEl.classList.add("visible");
+      hotcold.classList.remove("visible");
+      if(!mmHandler){
+        mmHandler=onMouseMove;
+        w.addEventListener("mousemove",mmHandler,{passive:true});
+      }
+      if(!rsHandler){
+        rsHandler=onResizeOrScroll;
+        w.addEventListener("resize",rsHandler);
+      }
+      if(!scHandler){
+        scHandler=onResizeOrScroll;
+        w.addEventListener("scroll",scHandler,{passive:true});
+      }
+
+      console.info("%c[hunter-amp] HUD ativado. Siga os níveis: cold → warm → hot → LOCK.","color:#38bdf8;font-family:monospace;");
+    }
+
+    function disableHunterHUD(){
+      var hudEl=d.getElementById("hunter-hud");
+      if(hudEl) hudEl.classList.remove("visible");
+      hotcold.classList.remove("visible");
+      if(mmHandler){
+        w.removeEventListener("mousemove",mmHandler);
+        mmHandler=null;
+      }
+      if(rsHandler){
+        w.removeEventListener("resize",rsHandler);
+        rsHandler=null;
+      }
+      if(scHandler){
+        w.removeEventListener("scroll",scHandler);
+        scHandler=null;
+      }
+      if(lastNearest && lastNearest.t && lastNearest.t.el){
+        lastNearest.t.el.classList.remove("hunter-targeted");
+      }
+      lastNearest=null;
+      console.info("%c[hunter-amp] HUD desativado.","color:#6b7280;font-family:monospace;");
+    }
+
+    // integra com o switch existente (que já muda cursor, quest etc.)
+    function syncFromClass(){
+      var on=hunterSwitch.classList.contains("on");
+      if(on) enableHunterHUD();
+      else disableHunterHUD();
+    }
+
+    hunterSwitch.addEventListener("click",function(){
+      // o script original já alterna a classe .on; aqui só reagimos
+      setTimeout(syncFromClass,0);
+    });
+
+    // se a página já carregar com modo caçador ativado (por causa de localStorage)
+    if(hunterSwitch.classList.contains("on")){
+      enableHunterHUD();
+    }
+
+    // expõe um pequeno helper para devs curiosos:
+    w.hunterScan=function(){
+      console.log("%c[hunter-amp] Alvos monitorados:", "color:#a855f7;font-family:monospace;");
+      console.table(targets.map(function(t){return {hint:t.hint, x:Math.round(t.x), y:Math.round(t.y), tag:t.el.tagName.toLowerCase()};}));
+      return targets;
+    };
+
+    console.log("%c✨ hunter-amp carregado: HUD, radar e sensor de proximidade ligados ao modo caçador.","color:#a855f7;font-family:monospace;");
+  });
+})();
+</script>
+
+
+<script>
+(function(){
+  var d=document,w=window;
+  function ready(fn){ if(d.readyState==="loading") d.addEventListener("DOMContentLoaded",fn); else fn(); }
+
+  ready(function(){
+    var startTime=Date.now();
+    var timeline=[];
+    var questLogged={}, debugOpened=false, rootOpened=false, ascSeen=false;
+    var style=d.createElement("style");
+    style.textContent=`
+#echo-overlay{
+  position:fixed;
+  inset:0;
+  z-index:120;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:radial-gradient(circle at 10% 0,rgba(56,189,248,0.20),rgba(15,23,42,0.98));
+  backdrop-filter:blur(24px) saturate(170%);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s ease;
+}
+#echo-overlay.visible{
+  opacity:1;
+  pointer-events:auto;
+}
+#echo-inner{
+  width:min(640px,92vw);
+  max-height:78vh;
+  border-radius:20px;
+  border:1px solid rgba(148,163,184,0.7);
+  background:rgba(15,23,42,0.98);
+  box-shadow:0 26px 90px rgba(15,23,42,1);
+  padding:16px 18px 14px 18px;
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+#echo-inner::before{
+  content:"";
+  position:absolute;
+  inset:-20%;
+  background:
+    radial-gradient(circle at 0 0,rgba(56,189,248,0.28),transparent 60%),
+    radial-gradient(circle at 100% 100%,rgba(168,85,247,0.34),transparent 60%);
+  mix-blend-mode:soft-light;
+  opacity:.9;
+}
+#echo-header{
+  position:relative;
+  z-index:1;
+  font-family:ui-monospace,system-ui,monospace;
+  font-size:11px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:#38bdf8;
+  margin-bottom:6px;
+}
+#echo-sub{
+  position:relative;
+  z-index:1;
+  font-family:ui-monospace,system-ui,monospace;
+  font-size:11px;
+  color:rgba(148,163,184,0.9);
+  margin-bottom:8px;
+}
+#echo-body{
+  position:relative;
+  z-index:1;
+  flex:1;
+  border-radius:12px;
+  border:1px solid rgba(31,41,55,0.9);
+  background:radial-gradient(circle at 0 0,rgba(15,23,42,0.94),rgba(15,23,42,0.99));
+  padding:8px 9px 7px 9px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+#echo-log{
+  flex:1;
+  margin:0;
+  padding:0;
+  font-family:ui-monospace,system-ui,monospace;
+  font-size:11px;
+  color:#e5e7eb;
+  white-space:pre;
+  overflow:auto;
+}
+#echo-log::-webkit-scrollbar{
+  width:4px;
+}
+#echo-log::-webkit-scrollbar-thumb{
+  background:rgba(75,85,99,0.9);
+  border-radius:999px;
+}
+#echo-footer{
+  position:relative;
+  z-index:1;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:8px;
+  gap:8px;
+}
+.echo-btn{
+  font-family:ui-monospace,system-ui,monospace;
+  font-size:11px;
+  border-radius:999px;
+  border:1px solid rgba(148,163,184,0.8);
+  background:rgba(15,23,42,0.98);
+  color:#e5e7eb;
+  padding:4px 10px;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.echo-btn-primary{
+  border-color:rgba(56,189,248,0.9);
+  color:#38bdf8;
+}
+#echo-grade{
+  font-family:ui-monospace,system-ui,monospace;
+  font-size:10px;
+  color:rgba(148,163,184,0.9);
+}
+@media (max-width:600px){
+  #echo-inner{
+    padding:14px 12px 12px 12px;
+  }
+}
+    `;
+    d.head.appendChild(style);
+
+    function tDelta(ts){
+      var diff=Math.max(0,ts-startTime);
+      var s=Math.floor(diff/1000);
+      var m=Math.floor(s/60);
+      var h=Math.floor(m/60);
+      s%=60; m%=60;
+      function pad(n){return n<10?"0"+n:n;}
+      return "["+pad(h)+":"+pad(m)+":"+pad(s)+"]";
+    }
+
+    function pushEvent(type, msg, meta){
+      meta=meta||{};
+      var ev={t:Date.now(), type:type, msg:msg, meta:meta};
+      timeline.push(ev);
+      try{
+        console.log("%c[echo-log] %c"+type+"%c "+msg,
+          "color:#a855f7;font-family:monospace;",
+          "color:#38bdf8;font-family:monospace;",
+          "color:#e5e7eb;font-family:monospace;");
+      }catch(e){}
+      return ev;
+    }
+
+    // ---- MONKEY-PATCH de funções globais já existentes ----
+    function wrapFn(name, label){
+      var fn=w[name];
+      if(typeof fn!=="function") return;
+      w[name]=function(){
+        pushEvent("call", "chamou "+label+"()", {fn:name});
+        return fn.apply(this, arguments);
+      };
+    }
+
+    wrapFn("help","help");
+    wrapFn("portal","portal");
+    wrapFn("hint","hint");
+    wrapFn("shrine","shrine");
+    wrapFn("quests","quests");
+    wrapFn("hiddenQuests","hiddenQuests");
+    wrapFn("hunterScan","hunterScan");
+
+    // ---- CLICK TRACKING INTERESSANTE ----
+    d.addEventListener("click",function(e){
+      var el=e.target.closest("#btn-start,#hunter-switch,#hero-title,#portal-close-btn,.hero-tab,#btn-spoiler,[data-ghost],[data-hint],.pseudo-link");
+      if(!el) return;
+      var txt=(el.dataset.hint||el.dataset.ghost||el.textContent||el.id||el.className||el.tagName||"").trim().replace(/\s+/g," ");
+      txt=txt.slice(0,80);
+      if(el.id==="btn-start") pushEvent("click","clicou em \"Começar o puzzle\"");
+      else if(el.id==="hunter-switch") pushEvent("click","alternou o modo caçador");
+      else if(el.id==="hero-title") pushEvent("click","clicou no título principal ("+txt+")");
+      else if(el.classList.contains("hero-tab")) pushEvent("click","clicou em hero-tab ("+txt+")");
+      else pushEvent("click","clicou em elemento suspeito: "+txt);
+    },true);
+
+    // ---- TECLADO (DEVTOOLS + ATALHOS SUSPEITOS) ----
+    w.addEventListener("keydown",function(e){
+      var k=e.key||"";
+      if(k==="F12"||(e.ctrlKey&&e.shiftKey&&k.toLowerCase()==="i")||(e.metaKey&&e.altKey&&k.toLowerCase()==="i")){
+        pushEvent("devtools","tentou abrir DevTools",{combo:k});
+      }
+      if(e.ctrlKey && !e.shiftKey && !e.altKey && k.toLowerCase()==="e"){
+        // Ctrl+E → atalha pro echo()
+        e.preventDefault();
+        pushEvent("shortcut","atalho Ctrl+E → echo()");
+        w.echo && w.echo();
+      }
+    });
+
+    // ---- OBSERVER PARA QUESTS & MODOS ----
+    var obs;
+    try{
+      obs=new MutationObserver(function(muts){
+        muts.forEach(function(m){
+          var el=m.target;
+          if(!el || !el.classList) return;
+
+          // qualquer quest ficando .completed
+          if(el.classList.contains("quest-item") && el.classList.contains("completed")){
+            var id=el.getAttribute("data-quest-id") || "unknown";
+            if(!questLogged[id]){
+              questLogged[id]=true;
+              var label=el.querySelector(".quest-title");
+              var txt=label?label.textContent.trim():"quest "+id;
+              pushEvent("quest","quest completada: "+txt,{id:id});
+            }
+          }
+
+          // debug-lab visível
+          if(el.id==="debug-lab" && !debugOpened){
+            var styleVal=w.getComputedStyle(el).display;
+            if(styleVal!=="none"){
+              debugOpened=true;
+              pushEvent("lab","Debug Lab revelado.");
+            }
+          }
+
+          // root-mode visível
+          if(el.id==="root-mode" && !rootOpened){
+            var st2=w.getComputedStyle(el).display;
+            if(st2!=="none"){
+              rootOpened=true;
+              pushEvent("mode","Modo Raiz ativado.");
+            }
+          }
+
+          // ascension overlay de outro script (se existir)
+          if(el.id==="ascension-overlay" && !ascSeen){
+            if(el.classList.contains("visible")){
+              ascSeen=true;
+              pushEvent("ending","Ascension / final secreto foi mostrado.");
+            }
+          }
+        });
+      });
+      obs.observe(d.body,{subtree:true,attributes:true,attributeFilter:["class","style"]});
+    }catch(e){}
+
+    // ---- LEITURA OPCIONAL DOS HIDDEN QUESTS (para score final) ----
+    var hiddenState={};
+    try{
+      var raw=localStorage.getItem("dev-shrine-hidden-quests-v1");
+      hiddenState=raw?JSON.parse(raw):{};
+    }catch(e){ hiddenState={}; }
+
+    // ---- OVERLAY E NARRATIVA ----
+    var echoOverlay, echoLogEl, echoGradeEl, typing=false;
+    function buildOverlay(){
+      if(echoOverlay) return;
+      echoOverlay=d.createElement("div");
+      echoOverlay.id="echo-overlay";
+      echoOverlay.innerHTML=`
+        <div id="echo-inner">
+          <div id="echo-header">SESSION ECHO // DEV SHRINE</div>
+          <div id="echo-sub">replay da sua exploração, visto pela própria página.</div>
+          <div id="echo-body"><pre id="echo-log"></pre></div>
+          <div id="echo-footer">
+            <div id="echo-grade">// grade: --</div>
+            <div>
+              <button class="echo-btn" id="echo-export"><span>exportar log</span><span>⤵</span></button>
+              <button class="echo-btn echo-btn-primary" id="echo-close"><span>fechar echo</span><span>✕</span></button>
+            </div>
+          </div>
+        </div>
+      `;
+      d.body.appendChild(echoOverlay);
+      echoLogEl=d.getElementById("echo-log");
+      echoGradeEl=d.getElementById("echo-grade");
+      d.getElementById("echo-close").addEventListener("click",function(){
+        echoOverlay.classList.remove("visible");
+      });
+      d.getElementById("echo-export").addEventListener("click",function(){
+        console.log("%c[echo-export] timeline completa:", "color:#a855f7;font-family:monospace;");
+        console.table(timeline.map(function(ev){
+          return {
+            t:new Date(ev.t).toISOString(),
+            type:ev.type,
+            msg:ev.msg
+          };
+        }));
+      });
+      echoOverlay.addEventListener("click",function(e){
+        if(e.target===echoOverlay) echoOverlay.classList.remove("visible");
+      });
+    }
+
+    function computeGrade(){
+      var mainScore=0, hiddenScore=0;
+      // score de quests principais (pelo estado salvo do script original, se houver)
+      var mainState={};
+      try{
+        var raw=localStorage.getItem("dev-shrine-quests-v1");
+        mainState=raw?JSON.parse(raw):{};
+      }catch(e){mainState={};}
+      ["start","console","debug","konami","secret-title","portal","hunter"].forEach(function(id){
+        if(mainState[id]) mainScore++;
+      });
+      Object.keys(hiddenState).forEach(function(k){
+        if(hiddenState[k]) hiddenScore++;
+      });
+      var total=mainScore+hiddenScore;
+      var grade="C";
+      if(total>=10) grade="S";
+      else if(total>=7) grade="A";
+      else if(total>=4) grade="B";
+      else if(total>=2) grade="C";
+      else grade="D";
+      echoGradeEl.textContent="// grade: "+grade+" ("+total+" eventos chave)";
+    }
+
+    function buildLines(){
+      if(!timeline.length){
+        return ["[00:00:00] a página observou, mas você ainda não fez nada interessante. 🤖"];
+      }
+      var lines=[];
+      lines.push(tDelta(timeline[0].t)+" sessão começou (ou pelo menos eu comecei a te observar).");
+      timeline.forEach(function(ev){
+        var ts=tDelta(ev.t);
+        var line=ts+" "+ev.type+" → "+ev.msg;
+        lines.push(line);
+      });
+
+      // adicionar resumo de hidden quests no final
+      var hiddenKeys=Object.keys(hiddenState||{}).filter(function(k){return !!hiddenState[k];});
+      if(hiddenKeys.length){
+        lines.push("");
+        lines.push(tDelta(Date.now())+" resumo oculto: você cumpriu hidden quests: "+hiddenKeys.join(", "));
+      }
+      return lines;
+    }
+
+    function typeLines(){
+      if(!echoLogEl) return;
+      typing=true;
+      echoLogEl.textContent="";
+      var lines=buildLines();
+      var full=lines.join("\n");
+      var i=0;
+      function step(){
+        if(!typing) return;
+        echoLogEl.textContent=full.slice(0,i);
+        i++;
+        if(i<=full.length){
+          var ch=full.charAt(i-1);
+          var delay=(ch==="\n")?40:12+Math.random()*18;
+          setTimeout(step,delay);
+        }else{
+          typing=false;
+        }
+      }
+      step();
+    }
+
+    function showEcho(){
+      buildOverlay();
+      echoOverlay.classList.add("visible");
+      computeGrade();
+      typeLines();
+    }
+
+    // ---- EXPOEM echo() GLOBAL ----
+    w.echo=function(){
+      pushEvent("call","echo() chamado – iniciando replay da sessão.");
+      showEcho();
+      return "replay iniciado.";
+    };
+
+    console.log("%c✨ echo() disponível – a página está gravando sua sessão para um replay narrado.","color:#a855f7;font-family:monospace;");
+
+    // evento inicial
+    pushEvent("session","página carregada, observador iniciado.");
+  });
+})();
+</script>
+
+<script>
+(function(){
+  var d=document,w=window;
+  function ready(fn){ if(d.readyState==="loading") d.addEventListener("DOMContentLoaded",fn); else fn(); }
+
+  ready(function(){
+    var breakBtn=d.getElementById("hero-break");
+    if(!breakBtn){
+      console.warn("[reality-break+] botão #hero-break não encontrado. Script ignorado.");
+      return;
+    }
+
+    // ===== CSS extra para o modo realidade-quebrada =====
+    var style=d.createElement("style");
+    style.textContent=`
+body.reality-broken{
+  animation:rb-hue 3.4s ease-in-out infinite alternate;
+}
+@keyframes rb-hue{
+  0%{ filter:none; }
+  40%{ filter:hue-rotate(15deg) contrast(1.1);}
+  70%{ filter:hue-rotate(-30deg) contrast(1.15) saturate(1.1);}
+  100%{ filter:hue-rotate(45deg) contrast(1.2) saturate(1.3);}
+}
+body.reality-broken .panel{
+  animation:rb-tilt 1.5s ease-in-out infinite alternate;
+  transform-origin:50% 50%;
+  transform-style:preserve-3d;
+}
+@keyframes rb-tilt{
+  0%{ transform:rotateX(0deg) rotateY(0deg) translateZ(0); }
+  50%{ transform:rotateX(6deg) rotateY(-6deg) translateZ(16px); }
+  100%{ transform:rotateX(-4deg) rotateY(4deg) translateZ(-8px); }
+}
+body.reality-broken .hero-title-main{
+  text-shadow:0 0 22px rgba(248,250,252,0.9),0 0 40px rgba(248,113,113,0.9);
+}
+body.reality-broken .zone{
+  transform-origin:50% 50%;
+  animation:rb-warp 2.8s ease-in-out infinite alternate;
+}
+@keyframes rb-warp{
+  0%{ transform:perspective(900px) translate3d(0,0,0) skewX(0deg); }
+  50%{ transform:perspective(900px) translate3d(0,-8px,0) skewX(3deg) scale(1.02); }
+  100%{ transform:perspective(900px) translate3d(0,6px,0) skewX(-3deg) scale(0.99); }
+}
+#reality-fracture{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:110;
+  opacity:0;
+  transition:opacity .18s ease;
+  mix-blend-mode:screen;
+}
+#reality-fracture.visible{
+  opacity:1;
+}
+#reality-fracture::before{
+  content:"";
+  position:absolute;
+  inset:-10%;
+  background:
+    repeating-linear-gradient(120deg,rgba(148,163,184,0.25) 0,rgba(148,163,184,0.25) 1px,transparent 1px,transparent 8px),
+    radial-gradient(circle at 0 0,rgba(248,250,252,0.24),transparent 55%),
+    radial-gradient(circle at 100% 100%,rgba(248,113,113,0.35),transparent 55%);
+  opacity:.5;
+  animation:rb-scan 2.2s linear infinite;
+}
+@keyframes rb-scan{
+  0%{ transform:translate3d(0,0,0); }
+  100%{ transform:translate3d(-40px,-40px,0); }
+}
+#reality-fracture-grid{
+  position:absolute;
+  inset:10%;
+  border-radius:18px;
+  border:1px dashed rgba(248,250,252,0.5);
+  box-shadow:0 0 40px rgba(15,23,42,1);
+  background:radial-gradient(circle at 50% 0,rgba(15,23,42,0.9),rgba(15,23,42,0.3));
+}
+#reality-fracture-caption{
+  position:absolute;
+  bottom:16px;
+  left:50%;
+  transform:translateX(-50%);
+  font-family:ui-monospace,system-ui,monospace;
+  font-size:11px;
+  padding:4px 10px;
+  border-radius:999px;
+  border:1px solid rgba(248,250,252,0.6);
+  background:rgba(15,23,42,0.98);
+  color:#e5e7eb;
+}
+#reality-fracture-caption span.status{
+  margin-right:6px;
+}
+#reality-fracture-caption span.timer{
+  color:rgba(248,250,252,0.85);
+}
+.reality-glitch-char{
+  display:inline-block;
+  animation:rb-char 250ms steps(2,end) infinite;
+}
+@keyframes rb-char{
+  0%{ transform:translateY(0); opacity:1;}
+  50%{ transform:translateY(1px); opacity:.6;}
+  100%{ transform:translateY(-1px); opacity:1;}
+}
+body.reality-broken .console-line{
+  filter:blur(0.5px);
+}
+body.reality-broken .toast{
+  transform:translateX(-50%) translateY(0) scale(1.02);
+}
+body.reality-broken .hero-tab#hero-break{
+  box-shadow:0 0 0 1px rgba(248,113,113,0.9),0 0 28px rgba(248,113,113,0.9);
+  border-color:rgba(248,113,113,0.9);
+}
+    `;
+    d.head.appendChild(style);
+
+    // ===== Estado interno =====
+    var fracture=d.createElement("div");
+    fracture.id="reality-fracture";
+    fracture.innerHTML='<div id="reality-fracture-grid"></div><div id="reality-fracture-caption"><span class="status">[ reality break in progress ]</span><span class="timer">--s</span></div>';
+    d.body.appendChild(fracture);
+
+    var captionTimer=fracture.querySelector(".timer");
+    var realityActive=false;
+    var timerId=null;
+    var countdownId=null;
+    var DURATION=9000; // 9 segundos de colapso
+    var originalLog={log:console.log,info:console.info,warn:console.warn,error:console.error};
+    var glitching=false;
+
+    // Elementos para glitch de texto
+    var glitchTargets=[];
+    function collectGlitchTargets(){
+      glitchTargets = [];
+      var sels=[
+        ".hero-title-main",
+        ".hero-subtitle",
+        ".typer-text",
+        ".quest-title",
+        ".console-line span:last-child"
+      ];
+      sels.forEach(function(sel){
+        d.querySelectorAll(sel).forEach(function(el){
+          if(!el.__rbOriginalText){
+            el.__rbOriginalText=el.textContent;
+          }
+          glitchTargets.push(el);
+        });
+      });
+    }
+
+    function randomChar(){
+      var chars="01{}[]<>/\\=+*&$#@!%ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      return chars.charAt(Math.floor(Math.random()*chars.length));
+    }
+
+    function glitchText(el,intensity){
+      if(!el.__rbOriginalText) return;
+      var src=el.__rbOriginalText;
+      var out="";
+      for(var i=0;i<src.length;i++){
+        var ch=src.charAt(i);
+        if(/\s/.test(ch)){ out+=ch; continue; }
+        if(Math.random()<intensity){
+          out+=randomChar();
+        }else{
+          out+=ch;
+        }
+      }
+      el.textContent=out;
+    }
+
+    function restoreText(){
+      glitchTargets.forEach(function(el){
+        if(el.__rbOriginalText) el.textContent=el.__rbOriginalText;
+      });
+    }
+
+    function tickGlitch(){
+      if(!realityActive) return;
+      var now=Date.now();
+      var remaining=Math.max(0, realityEndTime - now);
+      var ratio=1-remaining/DURATION; // 0..1
+      var intensity=Math.min(0.8, 0.2+ratio*0.6);
+      glitchTargets.forEach(function(el){
+        glitchText(el,intensity);
+      });
+      if(remaining<=0) return;
+      timerId=setTimeout(tickGlitch,120+Math.random()*80);
+    }
+
+    // ===== Console glitch =====
+    function wrapConsole(){
+      if(glitching) return;
+      glitching=true;
+      ["log","info","warn","error"].forEach(function(k){
+        var orig=originalLog[k];
+        console[k]=function(){
+          var args=[].slice.call(arguments);
+          try{
+            var msg=args.map(function(a){
+              if(typeof a==="string") return a;
+              try{return JSON.stringify(a);}catch(e){return String(a);}
+            }).join(" ");
+            var glitched=msg.split("").map(function(ch){
+              if(Math.random()<0.08 && !/\s/.test(ch)) return randomChar();
+              return ch;
+            }).join("");
+            orig.call(console,"%c[broken] %c"+glitched,"color:#f97373;font-family:monospace;","color:#e5e7eb;font-family:monospace;");
+          }catch(e){
+            orig.apply(console,args);
+          }
+        };
+      });
+    }
+
+    function restoreConsole(){
+      if(!glitching) return;
+      glitching=false;
+      console.log=originalLog.log;
+      console.info=originalLog.info;
+      console.warn=originalLog.warn;
+      console.error=originalLog.error;
+    }
+
+    // ===== Lógica de quebra de realidade =====
+    var realityEndTime=0;
+
+    function startCountdown(){
+      var tick=function(){
+        if(!realityActive) return;
+        var remaining=Math.max(0, realityEndTime - Date.now());
+        var s=Math.ceil(remaining/1000);
+        captionTimer.textContent=s+"s";
+        if(remaining<=0){
+          captionTimer.textContent="0s";
+          return;
+        }
+        countdownId=setTimeout(tick,250);
+      };
+      tick();
+    }
+
+    function breakReality(){
+      if(realityActive){
+        // já quebrada, ignora para não empilhar
+        return;
+      }
+      realityActive=true;
+      realityEndTime=Date.now()+DURATION;
+
+      collectGlitchTargets();
+      wrapConsole();
+
+      d.body.classList.add("reality-broken");
+      fracture.classList.add("visible");
+      captionTimer.textContent=Math.ceil(DURATION/1000)+"s";
+
+      // Efeito "char glitch" breve no botão
+      var labelEl=breakBtn.querySelector("span:last-child") || breakBtn;
+      if(!labelEl.__rbOriginalText) labelEl.__rbOriginalText=labelEl.textContent;
+      var labelOrig=labelEl.__rbOriginalText;
+      var labelIdx=0;
+      var labelTimer=setInterval(function(){
+        if(!realityActive){ clearInterval(labelTimer); labelEl.textContent=labelOrig; return; }
+        var s=labelOrig.split("").map(function(ch,i){
+          if(Math.random()<0.3 && !/\s/.test(ch)) return randomChar();
+          return ch;
+        }).join("");
+        labelEl.textContent=s;
+        labelIdx++;
+        if(labelIdx>20){ clearInterval(labelTimer); labelEl.textContent=labelOrig; }
+      },80);
+
+      // Glitch em alguns textos
+      tickGlitch();
+      startCountdown();
+
+      // log estilizado
+      try{
+        originalLog.warn("%c[break-reality+] realidade quebrada por "+(w?.navigator?.userAgent?"um dev curioso":"alguém"),"color:#f97373;font-family:monospace;");
+      }catch(e){}
+
+      setTimeout(healReality,DURATION);
+    }
+
+    function healReality(){
+      if(!realityActive) return;
+      realityActive=false;
+      d.body.classList.remove("reality-broken");
+      fracture.classList.remove("visible");
+      restoreText();
+      restoreConsole();
+      timerId && clearTimeout(timerId);
+      countdownId && clearTimeout(countdownId);
+      captionTimer.textContent="ok";
+      try{
+        originalLog.info("%c[break-reality+] realidade recomposta. nada aconteceu (oficialmente).","color:#22c55e;font-family:monospace;");
+      }catch(e){}
+    }
+
+    // ===== Expor status global =====
+    w.realityStatus=function(){
+      var st=realityActive?"broken":"stable";
+      console.log("%c[reality-status] realidade está: "+st,"color:#a855f7;font-family:monospace;");
+      return { status:st, endsAt:realityEndTime || null };
+    };
+
+    // Intercepta o clique no botão (ACRESCENTA, não substitui o handler original)
+    breakBtn.addEventListener("click",function(){
+      breakReality();
+    });
+
+    console.log("%c✨ break-reality+ carregado – agora o botão realmente quebra a página (por alguns segundos).","color:#f97373;font-family:monospace;");
+  });
+})();
+</script>
+
+
+<script>
+(function(){
+  "use strict";
+  var d=document,w=window;
+
+  function ready(fn){
+    if(d.readyState==="loading") d.addEventListener("DOMContentLoaded",fn,false);
+    else fn();
+  }
+
+  ready(function(){
+    var GS_KEY="dev-shrine-ghost-sessions-v1";
+    var QUEST_KEY="dev-shrine-quests-v1";
+    var HQUEST_KEY="dev-shrine-hidden-quests-v1";
+    var BOSS_KEY="dev-shrine-boss-v1";
+    var BOSS_CLEAR_KEY="dev-shrine-boss-cleared-v1";
+    var ASC_KEY="dev-shrine-ascended-v1";
+
+    var sessionId=Date.now().toString(16)+"-"+Math.random().toString(16).slice(2,8);
+    var startTime=Date.now();
+    var ghostEvents=[];
+    var maxGhostEvents=160;
+
+    var mouseCount=0,keyCount=0,consoleCalls=0;
+
+    function tDelta(ms){ return ms-startTime; }
+
+    function safeJSONGet(key){
+      try{
+        var raw=localStorage.getItem(key);
+        return raw?JSON.parse(raw):null;
+      }catch(e){return null;}
+    }
+    function safeJSONSet(key,val){
+      try{ localStorage.setItem(key,JSON.stringify(val)); }catch(e){}
+    }
+
+    function recordGhost(evt){
+      if(ghostEvents.length>=maxGhostEvents) return;
+      ghostEvents.push(evt);
+    }
+
+    // --- CLICK & INPUT TELEMETRY ---
+    d.addEventListener("click",function(e){
+      mouseCount++;
+      var t=tDelta(Date.now());
+      var el=e.target.closest("#btn-start,#hunter-switch,#hero-break,#hero-title,.hero-title,.hero-title-main,.hero-tab,.pseudo-link,[data-ghost],[data-hint],.quest-item");
+      if(!el) return;
+      var id=el.id||"", cls=(el.className||"").toString(), hint=el.dataset.hint||el.dataset.ghost||"";
+      recordGhost({t:t,type:"click",id:id,cls:cls,hint:hint.slice(0,60),x:e.clientX,y:e.clientY});
+    },true);
+
+    w.addEventListener("keydown",function(e){
+      keyCount++;
+      recordGhost({t:tDelta(Date.now()),type:"key",k:e.key||"",ctrl:!!e.ctrlKey,shift:!!e.shiftKey,alt:!!e.altKey});
+    });
+
+    // --- OBSERVER PARA MODOS E OVERLAYS ---
+    var obs;
+    try{
+      obs=new MutationObserver(function(muts){
+        muts.forEach(function(m){
+          var el=m.target;
+          if(!el) return;
+
+          if(el.id==="hunter-switch" && m.attributeName==="class"){
+            var on=el.classList.contains("on");
+            recordGhost({t:tDelta(Date.now()),type:"hunter",on:on});
+          }
+
+          if(el.id==="root-mode" && m.attributeName==="style"){
+            if(w.getComputedStyle(el).display!=="none"){
+              recordGhost({t:tDelta(Date.now()),type:"root-mode",visible:true});
+            }
+          }
+
+          if(el.id==="debug-lab" && m.attributeName==="style"){
+            if(w.getComputedStyle(el).display!=="none"){
+              recordGhost({t:tDelta(Date.now()),type:"debug-lab",visible:true});
+            }
+          }
+
+          if(el.id==="portal-overlay" && m.attributeName==="class"){
+            var vis=el.classList.contains("visible");
+            if(vis) recordGhost({t:tDelta(Date.now()),type:"portal",visible:true});
+          }
+
+          if(el.id==="ascension-overlay" && m.attributeName==="class"){
+            var visA=el.classList.contains("visible");
+            if(visA) recordGhost({t:tDelta(Date.now()),type:"ascension",visible:true});
+          }
+
+          if(el.id==="reality-fracture" && m.attributeName==="class"){
+            var visR=el.classList.contains("visible");
+            if(visR) recordGhost({t:tDelta(Date.now()),type:"break-reality",visible:true});
+          }
+
+          if(el.id==="echo-overlay" && m.attributeName==="class"){
+            var visE=el.classList.contains("visible");
+            if(visE) recordGhost({t:tDelta(Date.now()),type:"echo",visible:true});
+          }
+        });
+      });
+      obs.observe(d.body,{subtree:true,attributes:true,attributeFilter:["class","style"]});
+    }catch(e){}
+
+    // --- WRAPPERS DE FUNÇÕES GLOBAIS IMPORTANTES ---
+    function softWrap(name,label){
+      var fn=w[name];
+      if(typeof fn!=="function") return;
+      if(fn.__ds_oracle_wrapped) return;
+      function wrapped(){
+        consoleCalls++;
+        recordGhost({t:tDelta(Date.now()),type:"call",fn:name});
+        return fn.apply(this,arguments);
+      }
+      wrapped.__ds_oracle_wrapped=true;
+      try{ Object.defineProperty(wrapped,"name",{value:fn.name||name}); }catch(e){}
+      w[name]=wrapped;
+    }
+
+    ["help","portal","hint","quests","echo","hunterScan","hiddenQuests"].forEach(function(n){ softWrap(n,n); });
+
+    // --- SALVAR GHOST SESSIONS NO unload ---
+    function saveGhostSession(){
+      if(!ghostEvents.length) return;
+      var payload={
+        id:sessionId,
+        t:startTime,
+        duration:Date.now()-startTime,
+        events:ghostEvents
+      };
+      var arr=safeJSONGet(GS_KEY) || [];
+      arr.push(payload);
+      if(arr.length>5) arr=arr.slice(arr.length-5);
+      safeJSONSet(GS_KEY,arr);
+    }
+    w.addEventListener("beforeunload",saveGhostSession);
+
+    // =========================================================
+    // 1) MODO FANTASMA / GHOSTS
+    // =========================================================
+    var ghostLayer, ghostOverlay, ghostPlaying=false;
+
+    function createGhostLayer(){
+      if(ghostLayer) return;
+      ghostLayer=d.createElement("div");
+      ghostLayer.id="ghost-layer";
+      ghostLayer.style.cssText="position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden;";
+      d.body.appendChild(ghostLayer);
+
+      var st=d.createElement("style");
+      st.textContent=`
+#ghost-layer .ghost-click{
+  position:absolute;
+  width:14px;
+  height:14px;
+  border-radius:999px;
+  border:1px solid rgba(56,189,248,0.8);
+  box-shadow:0 0 16px rgba(56,189,248,0.8);
+  transform:translate(-50%,-50%) scale(0.4);
+  opacity:0;
+  animation:ghost-click 1.2s ease-out forwards;
+}
+#ghost-layer .ghost-click::after{
+  content:"";
+  position:absolute;
+  inset:2px;
+  border-radius:999px;
+  border:1px dashed rgba(148,163,184,0.7);
+}
+@keyframes ghost-click{
+  0%{ opacity:.0; transform:translate(-50%,-50%) scale(.2);}
+  10%{ opacity:.8; transform:translate(-50%,-50%) scale(1);}
+  100%{ opacity:0; transform:translate(-50%,-50%) scale(1.8);}
+}
+#ghost-overlay{
+  position:fixed;
+  inset:0;
+  z-index:95;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:radial-gradient(circle at 10% 0,rgba(56,189,248,0.18),rgba(15,23,42,0.98));
+  backdrop-filter:blur(22px) saturate(160%);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s ease;
+}
+#ghost-overlay.visible{
+  opacity:1;
+  pointer-events:auto;
+}
+#ghost-inner{
+  width:min(520px,92vw);
+  max-height:80vh;
+  border-radius:20px;
+  border:1px solid rgba(148,163,184,0.7);
+  background:rgba(15,23,42,0.98);
+  box-shadow:0 26px 90px rgba(15,23,42,1);
+  padding:16px 18px 14px 18px;
+  position:relative;
+  overflow:hidden;
+  font-family:ui-monospace,system-ui,monospace;
+  font-size:11px;
+  color:#e5e7eb;
+}
+#ghost-inner::before{
+  content:"";
+  position:absolute;
+  inset:-20%;
+  background:
+    radial-gradient(circle at 0 0,rgba(56,189,248,0.28),transparent 60%),
+    radial-gradient(circle at 100% 100%,rgba(168,85,247,0.34),transparent 60%);
+  mix-blend-mode:soft-light;
+  opacity:.8;
+}
+#ghost-header{
+  position:relative;
+  z-index:1;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:#38bdf8;
+  margin-bottom:6px;
+}
+#ghost-sub{
+  position:relative;
+  z-index:1;
+  color:rgba(148,163,184,0.9);
+  margin-bottom:8px;
+}
+#ghost-log{
+  position:relative;
+  z-index:1;
+  border-radius:12px;
+  border:1px solid rgba(31,41,55,0.9);
+  background:radial-gradient(circle at 0 0,rgba(15,23,42,0.94),rgba(15,23,42,0.99));
+  padding:8px 9px;
+  max-height:50vh;
+  overflow:auto;
+  white-space:pre;
+}
+#ghost-footer{
+  position:relative;
+  z-index:1;
+  margin-top:8px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+}
+.ghost-btn{
+  font-family:ui-monospace,system-ui,monospace;
+  font-size:11px;
+  border-radius:999px;
+  border:1px solid rgba(148,163,184,0.8);
+  background:rgba(15,23,42,0.98);
+  color:#e5e7eb;
+  padding:4px 10px;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.ghost-btn-primary{
+  border-color:rgba(56,189,248,0.9);
+  color:#38bdf8;
+}
+#ghost-meta{
+  font-size:10px;
+  color:rgba(148,163,184,0.9);
+}
+      `;
+      d.head.appendChild(st);
+    }
+
+    function spawnGhostClick(x,y){
+      if(!ghostLayer) createGhostLayer();
+      var dot=d.createElement("div");
+      dot.className="ghost-click";
+      dot.style.left=x+"px";
+      dot.style.top=y+"px";
+      ghostLayer.appendChild(dot);
+      setTimeout(function(){ if(dot.parentNode) dot.parentNode.removeChild(dot); },1200);
+    }
+
+    function ambientGhosts(){
+      var sessions=safeJSONGet(GS_KEY)||[];
+      if(!sessions.length) return;
+      createGhostLayer();
+      setTimeout(function loop(){
+        var arr=safeJSONGet(GS_KEY)||[];
+        if(!arr.length){ setTimeout(loop,10000);return; }
+        var s=arr[Math.floor(Math.random()*arr.length)];
+        if(!s||!s.events) { setTimeout(loop,10000);return; }
+        var ev=s.events.filter(function(e){ return e.type==="click"; });
+        if(!ev.length){ setTimeout(loop,10000);return; }
+        var pick=ev[Math.floor(Math.random()*ev.length)];
+        var jitterX=(Math.random()*16-8), jitterY=(Math.random()*16-8);
+        spawnGhostClick((pick.x||w.innerWidth/2)+jitterX,(pick.y||w.innerHeight/2)+jitterY);
+        setTimeout(loop,8000+Math.random()*8000);
+      },4000);
+    }
+
+    function showGhostOverlay(){
+      var sessions=safeJSONGet(GS_KEY)||[];
+      if(!sessions.length){
+        console.info("%c[ghosts] nenhuma sessão anterior gravada ainda.","color:#6b7280;font-family:monospace;");
+        return;
+      }
+      createGhostLayer();
+      if(!ghostOverlay){
+        ghostOverlay=d.createElement("div");
+        ghostOverlay.id="ghost-overlay";
+        ghostOverlay.innerHTML='' +
+          '<div id="ghost-inner">' +
+            '<div id="ghost-header">GHOST SESSIONS</div>' +
+            '<div id="ghost-sub">ecos das suas (ou de outros devs) visitas a este shrine.</div>' +
+            '<div id="ghost-log"></div>' +
+            '<div id="ghost-footer">' +
+              '<div id="ghost-meta">// sessões: --</div>' +
+              '<div>' +
+                '<button class="ghost-btn" id="ghost-replay"><span>replay rápido</span><span>▶</span></button>' +
+                '<button class="ghost-btn ghost-btn-primary" id="ghost-close"><span>fechar</span><span>✕</span></button>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+        d.body.appendChild(ghostOverlay);
+
+        ghostOverlay.addEventListener("click",function(e){
+          if(e.target===ghostOverlay) ghostOverlay.classList.remove("visible");
+        });
+        d.getElementById("ghost-close").addEventListener("click",function(){
+          ghostOverlay.classList.remove("visible");
+        });
+        d.getElementById("ghost-replay").addEventListener("click",playGhostTimeline);
+      }
+      var logEl=d.getElementById("ghost-log");
+      var metaEl=d.getElementById("ghost-meta");
+      var lines=[];
+      sessions.forEach(function(s,idx){
+        var dt=new Date(s.t||Date.now());
+        var label=dt.toLocaleString?dt.toLocaleString():dt.toISOString();
+        lines.push("#"+(idx+1)+" "+label+" ["+Math.round((s.duration||0)/1000)+"s]");
+        var clickCount=(s.events||[]).filter(function(ev){return ev.type==="click";}).length;
+        var hunterCount=(s.events||[]).filter(function(ev){return ev.type==="hunter";}).length;
+        var portalCount=(s.events||[]).filter(function(ev){return ev.type==="portal";}).length;
+        lines.push("   clicks: "+clickCount+" | hunter toggles: "+hunterCount+" | portal(): "+portalCount);
+      });
+      logEl.textContent=lines.join("\n")||"(nenhum dado interessante ainda)";
+      metaEl.textContent="// sessões: "+sessions.length+" (máx 5)";
+      ghostOverlay.classList.add("visible");
+    }
+
+    function playGhostTimeline(){
+      if(ghostPlaying) return;
+      var sessions=safeJSONGet(GS_KEY)||[];
+      if(!sessions.length) return;
+      ghostPlaying=true;
+      var s=sessions[sessions.length-1];
+      var events=(s.events||[]).slice(0,80);
+      var maxT=0;
+      events.forEach(function(e){ if(e.t>maxT) maxT=e.t; });
+      var scale=maxT? 0.4 : 1;
+      events.forEach(function(e){
+        if(e.type!=="click") return;
+        var delay=Math.floor(e.t*scale);
+        setTimeout(function(){
+          spawnGhostClick(e.x||w.innerWidth/2,e.y||w.innerHeight/2);
+        },delay);
+      });
+      setTimeout(function(){ ghostPlaying=false; },maxT*scale+1500);
+    }
+
+    w.ghosts=function(){
+      console.log("%c[ghosts] abrindo overlay de sessões fantasma.","color:#a855f7;font-family:monospace;");
+      showGhostOverlay();
+      return "ghost overlay aberto.";
+    };
+
+    ambientGhosts();
+
+    // =========================================================
+    // 2) ORÁCULO DE DEV
+    // =========================================================
+    var oracleOverlay,oracleLogEl,oracleTyping=false;
+
+    function createOracleStyles(){
+      var st=d.createElement("style");
+      st.textContent=`
+#oracle-overlay{
+  position:fixed;
+  inset:0;
+  z-index:96;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:radial-gradient(circle at 10% 0,rgba(56,189,248,0.18),rgba(15,23,42,0.98));
+  backdrop-filter:blur(22px) saturate(170%);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s ease;
+}
+#oracle-overlay.visible{
+  opacity:1;
+  pointer-events:auto;
+}
+#oracle-inner{
+  width:min(540px,94vw);
+  max-height:80vh;
+  border-radius:22px;
+  border:1px solid rgba(148,163,184,0.75);
+  background:rgba(15,23,42,0.98);
+  box-shadow:0 26px 90px rgba(15,23,42,1);
+  padding:18px 20px 14px 20px;
+  position:relative;
+  overflow:hidden;
+  font-family:ui-monospace,system-ui,monospace;
+  font-size:11px;
+  color:#e5e7eb;
+}
+#oracle-inner::before{
+  content:"";
+  position:absolute;
+  inset:-20%;
+  background:
+    radial-gradient(circle at 0 0,rgba(56,189,248,0.36),transparent 60%),
+    radial-gradient(circle at 100% 100%,rgba(129,140,248,0.3),transparent 60%);
+  mix-blend-mode:soft-light;
+  opacity:.95;
+}
+#oracle-header{
+  position:relative;
+  z-index:1;
+  letter-spacing:.24em;
+  text-transform:uppercase;
+  color:#38bdf8;
+  margin-bottom:5px;
+}
+#oracle-sub{
+  position:relative;
+  z-index:1;
+  color:rgba(148,163,184,0.9);
+  margin-bottom:8px;
+}
+#oracle-log{
+  position:relative;
+  z-index:1;
+  border-radius:12px;
+  border:1px solid rgba(31,41,55,0.9);
+  background:radial-gradient(circle at 0 0,rgba(15,23,42,0.94),rgba(15,23,42,0.99));
+  padding:8px 9px;
+  max-height:52vh;
+  overflow:auto;
+  white-space:pre-line;
+}
+#oracle-footer{
+  position:relative;
+  z-index:1;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:8px;
+  gap:8px;
+}
+.oracle-btn{
+  font-family:ui-monospace,system-ui,monospace;
+  font-size:11px;
+  border-radius:999px;
+  border:1px solid rgba(148,163,184,0.8);
+  background:rgba(15,23,42,0.98);
+  color:#e5e7eb;
+  padding:4px 10px;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.oracle-btn-primary{
+  border-color:rgba(56,189,248,0.9);
+  color:#38bdf8;
+}
+#oracle-meta{
+  font-size:10px;
+  color:rgba(148,163,184,0.9);
+}
+      `;
+      d.head.appendChild(st);
+    }
+
+    function buildOracleOverlay(){
+      if(oracleOverlay) return;
+      createOracleStyles();
+      oracleOverlay=d.createElement("div");
+      oracleOverlay.id="oracle-overlay";
+      oracleOverlay.innerHTML='' +
+        '<div id="oracle-inner">' +
+          '<div id="oracle-header">DEV ORACLE // BUILD FANTASMA</div>' +
+          '<div id="oracle-sub">uma entidade que assiste como você brinca com o shrine e registra padrões.</div>' +
+          '<div id="oracle-log"></div>' +
+          '<div id="oracle-footer">' +
+            '<div id="oracle-meta">// analisando...</div>' +
+            '<div>' +
+              '<button class="oracle-btn" id="oracle-ghosts"><span>ver ecos</span><span>👻</span></button>' +
+              '<button class="oracle-btn oracle-btn-primary" id="oracle-close"><span>fechar oráculo</span><span>✕</span></button>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      d.body.appendChild(oracleOverlay);
+      oracleLogEl=d.getElementById("oracle-log");
+
+      oracleOverlay.addEventListener("click",function(e){
+        if(e.target===oracleOverlay) oracleOverlay.classList.remove("visible");
+      });
+      d.getElementById("oracle-close").addEventListener("click",function(){
+        oracleOverlay.classList.remove("visible");
+      });
+      d.getElementById("oracle-ghosts").addEventListener("click",function(){
+        w.ghosts && w.ghosts();
+      });
+    }
+
+    function classifyDev(){
+      var questsState=safeJSONGet(QUEST_KEY)||{};
+      var hState=safeJSONGet(HQUEST_KEY)||{};
+      var ghostSessions=safeJSONGet(GS_KEY)||[];
+      var ascended=!!safeJSONGet(ASC_KEY);
+      var bossState=safeJSONGet(BOSS_KEY)||{};
+      var bossCleared=!!safeJSONGet(BOSS_CLEAR_KEY);
+
+      var mainCount=0;
+      ["start","console","debug","konami","secret-title","portal","hunter"].forEach(function(id){ if(questsState[id]) mainCount++; });
+      var hiddenCount=Object.keys(hState).length;
+      var ghostCount=ghostSessions.length;
+
+      var style=[];
+      if(mouseCount>keyCount*1.8) style.push("mais mouse do que teclado");
+      else if(keyCount>mouseCount*1.5) style.push("mais teclado do que mouse");
+      else style.push("equilíbrio estranho entre mouse e teclado");
+
+      if(consoleCalls===0) style.push("evita usar as funções globais como help() e cia");
+      else if(consoleCalls>5) style.push("gosta de conversar com o console");
+
+      if(ascended) style.push("já viu pelo menos um final de ascensão");
+      if(bossCleared) style.push("já derrotou um boss que nem deveria existir");
+
+      if(mainCount>=6 && hiddenCount>=4) style.push("claramente está tentando zerar este shrine");
+
+      var oracularLines=[];
+      oracularLines.push("Eu sou o oráculo que observa este Dev Shrine.");
+      oracularLines.push("");
+      oracularLines.push("Resumo da sua run atual:");
+      oracularLines.push("• Quests principais concluídas: "+mainCount+" / 7");
+      oracularLines.push("• Hidden quests registradas: "+hiddenCount);
+      oracularLines.push("• Sessões fantasma armazenadas: "+ghostCount);
+      oracularLines.push("");
+
+      oracularLines.push("Sobre o seu estilo de interação:");
+      style.forEach(function(s){ oracularLines.push("• "+s); });
+      oracularLines.push("");
+
+      if(!consoleCalls){
+        oracularLines.push("Você ainda não chamou nenhuma função global (pelo menos não que eu tenha visto).");
+        oracularLines.push("Às vezes, quem evita help() é quem mais precisa dela.");
+      }else if(consoleCalls>5){
+        oracularLines.push("Você usa o console como quem manda DM para o shrine.");
+        oracularLines.push("Continue. Eu leio tudo.");
+      }else{
+        oracularLines.push("Você conversa com o console de vez em quando, mas não confia totalmente nele.");
+      }
+
+      oracularLines.push("");
+
+      if(mainCount<=2 && ghostCount<=1){
+        oracularLines.push("Você ainda está na superfície.");
+        oracularLines.push("A maior parte do que esta página faz de estranho continua dormindo.");
+      }else if(mainCount>=4 && hiddenCount>=2){
+        oracularLines.push("Você já passou do ponto em que esta página era só 'um site bonitinho'.");
+        oracularLines.push("Neste nível, ela está te observando de volta.");
+      }else if(mainCount===7){
+        oracularLines.push("Você já limpou todas as quests principais.");
+        if(!ascended) oracularLines.push("Curioso: eu não encontrei a marca de ascensão. Será que você pulou algo?");
+      }
+
+      oracularLines.push("");
+
+      if(mainCount>=6 && hiddenCount>=3 && !bossCleared){
+        oracularLines.push("Existe um boss que ainda não falou com você.");
+        oracularLines.push("Quando estiver pronto, chame `boss()` no console.");
+      }else if(bossCleared){
+        oracularLines.push("O boss já te conhece. Eu também.");
+        oracularLines.push("Agora as sessões fantasma são mais interessantes do que a vitória em si.");
+      }else{
+        oracularLines.push("Por enquanto, eu vou só observar.");
+        oracularLines.push("Se você começar a errar propositalmente, eu vou perceber.");
+      }
+
+      return {
+        lines:oracularLines,
+        summary:"quests:"+mainCount+" hidden:"+hiddenCount+" ghostSessions:"+ghostCount
+      };
+    }
+
+    function typeOracle(lines){
+      if(!oracleLogEl) return;
+      oracleTyping=true;
+      oracleLogEl.textContent="";
+      var text=lines.join("\n");
+      var i=0;
+      (function tick(){
+        if(!oracleTyping) return;
+        oracleLogEl.textContent=text.slice(0,i);
+        i++;
+        if(i<=text.length){
+          var ch=text.charAt(i-1);
+          var delay=(ch==="\n")?40:12+Math.random()*22;
+          setTimeout(tick,delay);
+        }else{
+          oracleTyping=false;
+        }
+      })();
+    }
+
+    function showOracle(){
+      buildOracleOverlay();
+      var report=classifyDev();
+      var metaEl=d.getElementById("oracle-meta");
+      metaEl.textContent="// "+report.summary;
+      oracleOverlay.classList.add("visible");
+      oracleTyping=false;
+      typeOracle(report.lines);
+    }
+
+    w.oracle=function(){
+      console.log("%c[oracle] abrindo entidade de análise do seu estilo dev.","color:#a855f7;font-family:monospace;");
+      showOracle();
+      return "oráculo aberto.";
+    };
+
+    // =========================================================
+    // 3) BOSS FIGHT DE EASTER EGG
+    // =========================================================
+    var bossOverlay,bossPhase=0,bossActive=false;
+
+    function createBossStyles(){
+      var st=d.createElement("style");
+      st.textContent=`
+#boss-overlay{
+  position:fixed;
+  inset:0;
+  z-index:97;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:radial-gradient(circle at 10% 0,rgba(248,113,113,0.24),rgba(15,23,42,0.98));
+  backdrop-filter:blur(24px) saturate(180%);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s ease;
+}
+#boss-overlay.visible{
+  opacity:1;
+  pointer-events:auto;
+}
+#boss-inner{
+  width:min(560px,96vw);
+  max-height:82vh;
+  border-radius:22px;
+  border:1px solid rgba(248,113,113,0.9);
+  background:rgba(15,23,42,0.98);
+  box-shadow:0 28px 95px rgba(15,23,42,1);
+  padding:18px 20px 14px 20px;
+  position:relative;
+  overflow:hidden;
+  font-family:ui-monospace,system-ui,monospace;
+  font-size:11px;
+  color:#fee2e2;
+}
+#boss-inner::before{
+  content:"";
+  position:absolute;
+  inset:-20%;
+  background:
+    radial-gradient(circle at 0 0,rgba(248,113,113,0.35),transparent 60%),
+    radial-gradient(circle at 100% 100%,rgba(248,250,252,0.25),transparent 60%);
+  mix-blend-mode:soft-light;
+  opacity:.9;
+}
+#boss-header{
+  position:relative;
+  z-index:1;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  color:#fecaca;
+  margin-bottom:5px;
+}
+#boss-sub{
+  position:relative;
+  z-index:1;
+  color:#fecaca;
+  margin-bottom:8px;
+}
+#boss-log{
+  position:relative;
+  z-index:1;
+  border-radius:12px;
+  border:1px solid rgba(127,29,29,0.9);
+  background:radial-gradient(circle at 0 0,rgba(15,23,42,0.95),rgba(15,23,42,0.99));
+  padding:8px 9px;
+  max-height:52vh;
+  overflow:auto;
+  white-space:pre-line;
+}
+#boss-footer{
+  position:relative;
+  z-index:1;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:8px;
+  gap:8px;
+}
+.boss-btn{
+  font-family:ui-monospace,system-ui,monospace;
+  font-size:11px;
+  border-radius:999px;
+  border:1px solid rgba(252,165,165,0.9);
+  background:rgba(15,23,42,0.98);
+  color:#fecaca;
+  padding:4px 10px;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+#boss-meta{
+  font-size:10px;
+  color:#fecaca;
+}
+      `;
+      d.head.appendChild(st);
+    }
+
+    function buildBossOverlay(){
+      if(bossOverlay) return;
+      createBossStyles();
+      bossOverlay=d.createElement("div");
+      bossOverlay.id="boss-overlay";
+      bossOverlay.innerHTML='' +
+        '<div id="boss-inner">' +
+          '<div id="boss-header">BUILD BOSS // v0.0.0-phantom</div>' +
+          '<div id="boss-sub">um bug que ganhou consciência depois de assistir devs demais brincando com o shrine.</div>' +
+          '<div id="boss-log"></div>' +
+          '<div id="boss-footer">' +
+            '<div id="boss-meta">// fase: 0</div>' +
+            '<button class="boss-btn" id="boss-close"><span>fugir (por enquanto)</span><span>↩</span></button>' +
+          '</div>' +
+        '</div>';
+      d.body.appendChild(bossOverlay);
+      bossOverlay.addEventListener("click",function(e){
+        if(e.target===bossOverlay) bossOverlay.classList.remove("visible");
+      });
+      d.getElementById("boss-close").addEventListener("click",function(){
+        bossOverlay.classList.remove("visible");
+      });
+    }
+
+    function getBossEligible(){
+      var qs=safeJSONGet(QUEST_KEY)||{};
+      var hq=safeJSONGet(HQUEST_KEY)||{};
+      var mainCount=0;
+      ["start","console","debug","konami","secret-title","portal","hunter"].forEach(function(id){ if(qs[id]) mainCount++; });
+      var hiddenCount=Object.keys(hq).length;
+      var ascended=!!safeJSONGet(ASC_KEY);
+      return (mainCount>=5 && hiddenCount>=3 && ascended);
+    }
+
+    function setBossPhase(p){
+      bossPhase=p;
+      safeJSONSet(BOSS_KEY,{phase:p});
+      var metaEl=d.getElementById("boss-meta");
+      if(metaEl) metaEl.textContent="// fase: "+p;
+      var logEl=d.getElementById("boss-log");
+      if(!logEl) return;
+      var lines=[];
+      if(p===0){
+        lines.push("O boss ainda está dormindo.");
+        lines.push("Complete mais quests e provoque a página até que ela te note.");
+      }else if(p===1){
+        lines.push("Fase 1 – CAÇADA");
+        lines.push("• Ligue o modo caçador. Eu quero ver você apontar o radar para mim.");
+      }else if(p===2){
+        lines.push("Fase 2 – XRAY");
+        lines.push("• Ative o XRAY (Ctrl+Shift+X) e admita que você precisa enxergar além do DOM.");
+      }else if(p===3){
+        lines.push("Fase 3 – RUPTURA");
+        lines.push("• Use o botão break reality. Se vai quebrar o meu mundo, faça direito.");
+      }else if(p===4){
+        lines.push("Fase 4 – ECO");
+        lines.push("• Chame echo() e assista a sua própria run sendo narrada.");
+      }else if(p>=5){
+        lines.push("Fase FINAL – ACEITAÇÃO");
+        lines.push("Pronto. Você ligou o caçador, abriu XRAY, quebrou a realidade e encarou o echo().");
+        lines.push("Eu oficialmente reconheço que você zerou este shrine.");
+        lines.push("");
+        lines.push("Daqui pra frente, o verdadeiro boss é explicar isso em um vídeo de menos de 20 minutos.");
+      }
+      logEl.textContent=lines.join("\n");
+    }
+
+    function maybeInitBossPhaseFromStorage(){
+      var st=safeJSONGet(BOSS_KEY)||{};
+      bossPhase=st.phase||0;
+      if(bossPhase<0) bossPhase=0;
+      if(bossPhase>5) bossPhase=5;
+    }
+
+    function startBoss(){
+      if(!getBossEligible()){
+        console.warn("%c[boss] ainda não elegível. Termine mais quests e hidden quests primeiro.","color:#fbbf24;font-family:monospace;");
+        return;
+      }
+      if(safeJSONGet(BOSS_CLEAR_KEY)){
+        console.log("%c[boss] você já derrotou o boss. Ele só vai observar agora.","color:#22c55e;font-family:monospace;");
+      }
+      buildBossOverlay();
+      bossOverlay.classList.add("visible");
+      bossActive=true;
+      if(bossPhase===0) bossPhase=1;
+      setBossPhase(bossPhase);
+    }
+
+    function completeBoss(){
+      bossPhase=5;
+      safeJSONSet(BOSS_KEY,{phase:5});
+      safeJSONSet(BOSS_CLEAR_KEY,{t:Date.now()});
+      setBossPhase(5);
+    }
+
+    function observeBossProgress(){
+      var observer;
+      try{
+        observer=new MutationObserver(function(muts){
+          if(!bossActive) return;
+          muts.forEach(function(m){
+            var el=m.target;
+            if(!el) return;
+
+            if(bossPhase===1 && el.id==="hunter-switch" && el.classList.contains("on")){
+              bossPhase=2;
+              setBossPhase(2);
+              console.log("%c[boss] fase 1 concluída. hunter mode ON.","color:#38bdf8;font-family:monospace;");
+            }
+
+            if(bossPhase===2 && el.id==="xray-overlay" && el.classList.contains("visible")){
+              bossPhase=3;
+              setBossPhase(3);
+              console.log("%c[boss] fase 2 concluída. XRAY ativado.","color:#38bdf8;font-family:monospace;");
+            }
+
+            if(bossPhase===3 && el.id==="reality-fracture" && el.classList.contains("visible")){
+              bossPhase=4;
+              setBossPhase(4);
+              console.log("%c[boss] fase 3 concluída. realidade quebrada.","color:#38bdf8;font-family:monospace;");
+            }
+
+            if(bossPhase===4 && el.id==="echo-overlay" && el.classList.contains("visible")){
+              completeBoss();
+              console.log("%c[boss] fase 4 concluída. Você encarou o echo() com o boss assistindo.","color:#22c55e;font-family:monospace;");
+            }
+          });
+        });
+        observer.observe(d.body,{subtree:true,attributes:true,attributeFilter:["class"]});
+      }catch(e){}
+    }
+
+    maybeInitBossPhaseFromStorage();
+    observeBossProgress();
+
+    w.boss=function(){
+      console.log("%c[boss] invocado. Se você for digno, ele vai acordar.","color:#f97373;font-family:monospace;");
+      startBoss();
+      return "boss chamado.";
+    };
+
+    // Pequeno hint no console para dev curioso
+    console.log("%c✨ camada cósmica carregada: ghosts(), oracle(), boss() disponíveis.","color:#a855f7;font-family:monospace;");
+  });
+})();
+</script>
+
+<script>
+(function(){
+  "use strict";
+  var d=document,w=window;
+  function ready(fn){ if(d.readyState==="loading") d.addEventListener("DOMContentLoaded",fn,false); else fn(); }
+
+  ready(function(){
+    var runBtn=d.getElementById("hero-run");
+    if(!runBtn){
+      console.warn("[run-boost] botão #hero-run não encontrado. script ignorado.");
+      return;
+    }
+
+    var RUN_KEY="dev-shrine-run-enhanced-v1";
+    var QUEST_KEY="dev-shrine-quests-v1";
+    var HQUEST_KEY="dev-shrine-hidden-quests-v1";
+    var GS_KEY="dev-shrine-ghost-sessions-v1";
+    var BOSS_CLEAR_KEY="dev-shrine-boss-cleared-v1";
+    var ASC_KEY="dev-shrine-ascended-v1";
+
+    function safeJSONGet(key){
+      try{
+        var raw=localStorage.getItem(key);
+        return raw?JSON.parse(raw):null;
+      }catch(e){return null;}
+    }
+    function safeJSONSet(key,val){
+      try{ localStorage.setItem(key,JSON.stringify(val)); }catch(e){}
+    }
+
+    // --- CSS extra ---
+    var style=d.createElement("style");
+    style.textContent=`
+body.run-page-boost{
+  transition:transform .28s ease, filter .28s ease;
+  transform:scale(1.01);
+  filter:saturate(1.05);
+}
+.run-page-boost .zone{
+  transform-origin:50% 50%;
+  animation:run-boost-warp 0.7s ease-out 1;
+}
+@keyframes run-boost-warp{
+  0%{ transform:perspective(900px) translate3d(0,8px,0) scale(0.98); }
+  40%{ transform:perspective(900px) translate3d(0,-4px,0) scale(1.02); }
+  100%{ transform:perspective(900px) translate3d(0,0,0) scale(1); }
+}
+#run-overlay{
+  position:fixed;
+  left:50%;
+  bottom:16px;
+  transform:translateX(-50%) translateY(120%);
+  z-index:70;
+  min-width:260px;
+  max-width:480px;
+  border-radius:14px;
+  border:1px solid rgba(148,163,184,0.8);
+  background:rgba(15,23,42,0.98);
+  box-shadow:0 18px 60px rgba(15,23,42,1);
+  overflow:hidden;
+  font-family:ui-monospace,system-ui,monospace;
+  font-size:11px;
+  color:#e5e7eb;
+  opacity:0;
+  transition:opacity .22s ease, transform .22s ease;
+}
+#run-overlay.visible{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+#run-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:5px 9px 3px 9px;
+  border-bottom:1px solid rgba(31,41,55,0.95);
+}
+#run-title{
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:#38bdf8;
+}
+#run-seed{
+  font-size:10px;
+  color:rgba(148,163,184,0.9);
+}
+#run-log{
+  padding:5px 9px 4px 9px;
+  max-height:120px;
+  overflow:auto;
+  white-space:pre;
+}
+#run-log::-webkit-scrollbar{
+  width:4px;
+}
+#run-log::-webkit-scrollbar-thumb{
+  background:rgba(75,85,99,0.95);
+  border-radius:999px;
+}
+#run-footer{
+  padding:3px 9px 5px 9px;
+  border-top:1px solid rgba(31,41,55,0.95);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:6px;
+}
+#run-progress-container{
+  flex:1;
+  height:4px;
+  border-radius:999px;
+  background:rgba(31,41,55,0.9);
+  overflow:hidden;
+}
+#run-progress-bar{
+  height:100%;
+  width:0%;
+  border-radius:999px;
+  background:linear-gradient(90deg,#22c55e,#38bdf8);
+  transition:width .18s ease;
+}
+#run-status{
+  font-size:10px;
+  color:rgba(148,163,184,0.9);
+  white-space:nowrap;
+}
+#run-close{
+  margin-left:6px;
+  font-size:10px;
+  border-radius:999px;
+  border:1px solid rgba(148,163,184,0.8);
+  background:rgba(15,23,42,0.98);
+  color:#e5e7eb;
+  padding:2px 6px;
+  cursor:pointer;
+}
+    `;
+    d.head.appendChild(style);
+
+    // --- DOM do overlay ---
+    var overlay=d.createElement("div");
+    overlay.id="run-overlay";
+    overlay.innerHTML='' +
+      '<div id="run-header">' +
+        '<div id="run-title">RUN PAGE // build log</div>' +
+        '<div id="run-seed">seed: --</div>' +
+      '</div>' +
+      '<div id="run-log"></div>' +
+      '<div id="run-footer">' +
+        '<div id="run-progress-container"><div id="run-progress-bar"></div></div>' +
+        '<div id="run-status">idle</div>' +
+        '<button id="run-close">ok</button>' +
+      '</div>';
+    d.body.appendChild(overlay);
+
+    var runLogEl=d.getElementById("run-log");
+    var runSeedEl=d.getElementById("run-seed");
+    var runStatusEl=d.getElementById("run-status");
+    var runProgressBar=d.getElementById("run-progress-bar");
+    var runCloseBtn=d.getElementById("run-close");
+
+    var running=false;
+    var fullRunShown = !!safeJSONGet(RUN_KEY);
+
+    runCloseBtn.addEventListener("click",function(){
+      overlay.classList.remove("visible");
+      d.body.classList.remove("run-page-boost");
+    });
+
+    overlay.addEventListener("click",function(e){
+      if(e.target===overlay){
+        overlay.classList.remove("visible");
+        d.body.classList.remove("run-page-boost");
+      }
+    });
+
+    function appendLog(line){
+      runLogEl.textContent += (runLogEl.textContent ? "\n" : "") + line;
+      runLogEl.scrollTop = runLogEl.scrollHeight;
+    }
+
+    function computeSummary(){
+      var qs=safeJSONGet(QUEST_KEY)||{};
+      var hq=safeJSONGet(HQUEST_KEY)||{};
+      var gs=safeJSONGet(GS_KEY)||[];
+      var asc=safeJSONGet(ASC_KEY);
+      var bossCleared=safeJSONGet(BOSS_CLEAR_KEY);
+
+      var mainCount=0;
+      ["start","console","debug","konami","secret-title","portal","hunter"].forEach(function(id){ if(qs[id]) mainCount++; });
+      var hiddenCount=Object.keys(hq).length;
+      var ghosts=gs.length||0;
+      var ascStr=asc?"ascended":"no-ascension";
+      var bossStr=bossCleared?"boss-cleared":"boss-pending";
+
+      return {
+        main:mainCount,
+        hidden:hiddenCount,
+        ghosts:ghosts,
+        asc:ascStr,
+        boss:bossStr
+      };
+    }
+
+    function generateSeed(){
+      var s=Math.floor(Math.random()*0xffff).toString(16).padStart(4,"0");
+      runSeedEl.textContent="seed: 0x"+s;
+    }
+
+    function setProgress(pct){
+      runProgressBar.style.width=Math.max(0,Math.min(100,pct))+"%";
+    }
+
+    function runSequence(){
+      if(running) return;
+      running=true;
+      d.body.classList.add("run-page-boost");
+      overlay.classList.add("visible");
+      runLogEl.textContent="";
+      runStatusEl.textContent="booting...";
+      setProgress(0);
+      generateSeed();
+
+      var summary=computeSummary();
+      var steps = fullRunShown ? [
+        {t:0,    msg:"checking DOM integrity...", pct:10},
+        {t:180,  msg:"re-running animations and enabling scroll...", pct:40},
+        {t:360,  msg:"status: "+summary.main+" quests, "+summary.hidden+" hidden, "+summary.ghosts+" ghosts.", pct:75},
+        {t:560,  msg:"build succeeded – "+summary.asc+", "+summary.boss+".", pct:100}
+      ] : [
+        {t:0,    msg:"boot sequence started...", pct:5},
+        {t:160,  msg:"scanning quests state...", pct:20},
+        {t:320,  msg:"found "+summary.main+" main quests and "+summary.hidden+" hidden quests.", pct:40},
+        {t:520,  msg:"ghost sessions in storage: "+summary.ghosts, pct:55},
+        {t:680,  msg:"ascension state: "+summary.asc+" | boss: "+summary.boss, pct:80},
+        {t:900,  msg:"build succeeded – shrine now running in enhanced mode.", pct:100}
+      ];
+
+      steps.forEach(function(step,idx){
+        setTimeout(function(){
+          appendLog("["+new Date().toLocaleTimeString()+"] "+step.msg);
+          setProgress(step.pct);
+          if(idx===steps.length-1){
+            runStatusEl.textContent="ok";
+            running=false;
+            if(!fullRunShown){
+              fullRunShown=true;
+              safeJSONSet(RUN_KEY,{firstRunAt:Date.now()});
+            }
+            // remove boost gently depois de um tempo
+            setTimeout(function(){
+              d.body.classList.remove("run-page-boost");
+            },1200);
+          }else{
+            runStatusEl.textContent="running...";
+          }
+        },step.t);
+      });
+    }
+
+    // Listener extra: não substitui o handler original, apenas complementa.
+    runBtn.addEventListener("click",function(){
+      runSequence();
+    });
+
+    console.log("%c✨ run-page+ carregado – o botão run page agora mostra um mini build log.","color:#38bdf8;font-family:monospace;");
+  });
+})();
+</script>
+
+<script>
+(function(){
+  "use strict";
+  var d=document,w=window;
+  function ready(fn){ if(d.readyState==="loading") d.addEventListener("DOMContentLoaded",fn,false); else fn(); }
+
+  ready(function(){
+    var T_KEY="dev-shrine-telemetry-v1";
+    var QUEST_KEY="dev-shrine-quests-v1";
+    var HQUEST_KEY="dev-shrine-hidden-quests-v1";
+
+    function safeGet(key){
+      try{
+        var raw=localStorage.getItem(key);
+        return raw?JSON.parse(raw):null;
+      }catch(e){return null;}
+    }
+    function safeSet(key,val){
+      try{ localStorage.setItem(key,JSON.stringify(val)); }catch(e){}
+    }
+
+    function newId(){ return Date.now().toString(16)+"-"+Math.random().toString(16).slice(2,8); }
+
+    var now=Date.now();
+    var visitStart=now;
+    var sessionId=newId();
+
+    var tel=safeGet(T_KEY)||{};
+    if(!tel.id) tel.id=newId();
+    if(typeof tel.visitCount!=="number") tel.visitCount=0;
+    if(typeof tel.totalTime!=="number") tel.totalTime=0;
+    if(typeof tel.longestSession!=="number") tel.longestSession=0;
+    if(typeof tel.devtoolsAttempts!=="number") tel.devtoolsAttempts=0;
+    if(typeof tel.firstDevtoolsSec!=="number") tel.firstDevtoolsSec=null;
+    if(typeof tel.fastestDevtoolsSec!=="number") tel.fastestDevtoolsSec=null;
+    if(typeof tel.lastDevtoolsSec!=="number") tel.lastDevtoolsSec=null;
+    if(typeof tel.maxIdleMs!=="number") tel.maxIdleMs=0;
+    if(typeof tel.nightVisits!=="number") tel.nightVisits=0;
+    if(typeof tel.earliestHour!=="number") tel.earliestHour=null;
+    if(typeof tel.latestHour!=="number") tel.latestHour=null;
+    if(typeof tel.lastDuration!=="number") tel.lastDuration=0;
+    if(typeof tel.fastReturnMs!=="number") tel.fastReturnMs=null;
+    if(typeof tel.awareShown!=="boolean") tel.awareShown=false;
+
+    var lastVisit=tel.lastVisit||null;
+    tel.lastVisit=now;
+    tel.visitCount++;
+
+    var h=(new Date(now)).getHours();
+    if(h<5 || h>=23) tel.nightVisits++;
+
+    if(tel.earliestHour===null || h<tel.earliestHour) tel.earliestHour=h;
+    if(tel.latestHour===null || h>tel.latestHour) tel.latestHour=h;
+
+    if(lastVisit){
+      var gap=now-lastVisit;
+      if(tel.fastReturnMs===null || gap<tel.fastReturnMs) tel.fastReturnMs=gap;
+    }
+
+    safeSet(T_KEY,tel); // salva estado inicial da visita
+
+    // ---------- DETECÇÃO DE IDLE ----------
+    var lastActivity=Date.now();
+    var currentIdleStreak=0;
+    ["mousemove","keydown","scroll","click"].forEach(function(ev){
+      w.addEventListener(ev,function(){
+        var now=Date.now();
+        var idle=now-lastActivity;
+        if(idle>currentIdleStreak) currentIdleStreak=idle;
+        lastActivity=now;
+      },{passive:true});
+    });
+
+    var idleTimer=setInterval(function(){
+      var now=Date.now();
+      var idle=now-lastActivity;
+      if(idle>currentIdleStreak) currentIdleStreak=idle;
+    },5000);
+
+    // ---------- DETECÇÃO DE TENTATIVA DE DEVTOOLS ----------
+    var devtoolsRecordedThisSession=false;
+    w.addEventListener("keydown",function(e){
+      var k=e.key||"";
+      if(k==="F12" || (e.ctrlKey&&e.shiftKey&&k.toLowerCase()==="i") || (e.metaKey&&e.altKey&&k.toLowerCase()==="i")){
+        if(devtoolsRecordedThisSession) return;
+        devtoolsRecordedThisSession=true;
+        var diffSec=(Date.now()-visitStart)/1000;
+        tel.devtoolsAttempts++;
+        tel.lastDevtoolsSec=diffSec;
+        if(tel.firstDevtoolsSec===null) tel.firstDevtoolsSec=diffSec;
+        if(tel.fastestDevtoolsSec===null || diffSec<tel.fastestDevtoolsSec) tel.fastestDevtoolsSec=diffSec;
+        safeSet(T_KEY,tel);
+        // mensagem sutil no console
+        try{
+          console.log("%c[shrine] você tentou abrir o DevTools em "+diffSec.toFixed(1)+"s desta vez.","color:#f97316;font-family:monospace;");
+        }catch(e){}
+      }
+    });
+
+    // ---------- HELPERS ----------
+    function msToPretty(ms){
+      var s=Math.floor(ms/1000);
+      var m=Math.floor(s/60); var h=Math.floor(m/60);
+      s%=60; m%=60;
+      function pad(n){return n<10?"0"+n:n;}
+      if(h>0) return h+"h"+pad(m)+"m"+pad(s)+"s";
+      if(m>0) return m+"m"+pad(s)+"s";
+      return s+"s";
+    }
+
+    function hr(n){
+      if(n===null || typeof n!=="number") return "--h";
+      var p=("0"+n).slice(-2);
+      return p+"h";
+    }
+
+    // ---------- MENSAGENS SUTIS NO CONSOLE ----------
+    (function subtleConsole(){
+      try{
+        if(tel.visitCount>1){
+          setTimeout(function(){
+            var msg="Bem-vindo de volta. Esta é a sua visita nº "+tel.visitCount+".";
+            console.log("%c[shrine] %c"+msg,"color:#6366f1;font-family:monospace;","color:#e5e7eb;font-family:monospace;");
+          },1200);
+        }else{
+          setTimeout(function(){
+            console.log("%c[shrine] %cprimeira visita registrada. vamos ver como você brinca aqui.","color:#6366f1;font-family:monospace;","color:#e5e7eb;font-family:monospace;");
+          },1200);
+        }
+
+        if(tel.lastDuration>0){
+          setTimeout(function(){
+            console.log("%c[shrine] %cna última sessão você ficou "+msToPretty(tel.lastDuration)+".","color:#22c55e;font-family:monospace;","color:#e5e7eb;font-family:monospace;");
+          },2800);
+        }
+
+        if(tel.devtoolsAttempts>0){
+          setTimeout(function(){
+            var base="Você já tentou abrir o DevTools "+tel.devtoolsAttempts+" vez"+(tel.devtoolsAttempts>1?"es":"")+" aqui.";
+            var extra="";
+            if(tel.fastestDevtoolsSec!==null){
+              extra+=" recorde: "+tel.fastestDevtoolsSec.toFixed(1)+"s após o load.";
+            }
+            console.log("%c[shrine] %c"+base+extra,"color:#f97316;font-family:monospace;","color:#e5e7eb;font-family:monospace;");
+          },4200);
+        }
+
+        if(tel.nightVisits>0){
+          setTimeout(function(){
+            console.log("%c[shrine] %cRegistro interno: você já abriu este shrine "+tel.nightVisits+" vez(es) em horário de madrugada.","color:#eab308;font-family:monospace;","color:#e5e7eb;font-family:monospace;");
+          },6000);
+        }
+      }catch(e){}
+    })();
+
+    // ---------- OVERLAY "A PÁGINA SABE DEMAIS" ----------
+    var awareOverlay, awareLogEl, awareShown=false;
+
+    function createAwareStyles(){
+      var st=d.createElement("style");
+      st.textContent=`
+#aware-overlay{
+  position:fixed;
+  inset:0;
+  z-index:118;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:radial-gradient(circle at 10% 0,rgba(56,189,248,0.18),rgba(15,23,42,0.98));
+  backdrop-filter:blur(26px) saturate(180%);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s ease;
+}
+#aware-overlay.visible{
+  opacity:1;
+  pointer-events:auto;
+}
+#aware-inner{
+  width:min(540px,94vw);
+  max-height:80vh;
+  border-radius:22px;
+  border:1px solid rgba(248,250,252,0.8);
+  background:rgba(15,23,42,0.98);
+  box-shadow:0 30px 100px rgba(15,23,42,1);
+  padding:18px 20px 14px 20px;
+  position:relative;
+  overflow:hidden;
+  font-family:ui-monospace,system-ui,monospace;
+  font-size:11px;
+  color:#e5e7eb;
+}
+#aware-inner::before{
+  content:"";
+  position:absolute;
+  inset:-20%;
+  background:
+    radial-gradient(circle at 0 0,rgba(248,250,252,0.26),transparent 60%),
+    radial-gradient(circle at 100% 100%,rgba(56,189,248,0.35),transparent 60%);
+  mix-blend-mode:soft-light;
+  opacity:.95;
+}
+#aware-header{
+  position:relative;
+  z-index:1;
+  letter-spacing:.24em;
+  text-transform:uppercase;
+  color:#f97316;
+  margin-bottom:5px;
+}
+#aware-sub{
+  position:relative;
+  z-index:1;
+  color:rgba(148,163,184,0.9);
+  margin-bottom:8px;
+}
+#aware-log{
+  position:relative;
+  z-index:1;
+  border-radius:12px;
+  border:1px solid rgba(31,41,55,0.9);
+  background:radial-gradient(circle at 0 0,rgba(15,23,42,0.94),rgba(15,23,42,0.99));
+  padding:8px 9px;
+  max-height:52vh;
+  overflow:auto;
+  white-space:pre-line;
+}
+#aware-footer{
+  position:relative;
+  z-index:1;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:8px;
+  gap:8px;
+}
+.aware-btn{
+  font-family:ui-monospace,system-ui,monospace;
+  font-size:11px;
+  border-radius:999px;
+  border:1px solid rgba(148,163,184,0.85);
+  background:rgba(15,23,42,0.98);
+  color:#e5e7eb;
+  padding:4px 10px;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.aware-btn-primary{
+  border-color:rgba(248,250,252,0.9);
+  color:#f97316;
+}
+#aware-meta{
+  font-size:10px;
+  color:rgba(148,163,184,0.9);
+}
+      `;
+      d.head.appendChild(st);
+    }
+
+    function buildAwareOverlay(){
+      if(awareOverlay) return;
+      createAwareStyles();
+      awareOverlay=d.createElement("div");
+      awareOverlay.id="aware-overlay";
+      awareOverlay.innerHTML='' +
+        '<div id="aware-inner">' +
+          '<div id="aware-header">A PÁGINA SABE DEMAIS</div>' +
+          '<div id="aware-sub">ou pelo menos, ela sabe tudo o que você já fez aqui.</div>' +
+          '<div id="aware-log"></div>' +
+          '<div id="aware-footer">' +
+            '<div id="aware-meta">// telemetria local, nada sai do seu browser</div>' +
+            '<div>' +
+              '<button class="aware-btn" id="aware-console"><span>ver no console</span><span>⌘</span></button>' +
+              '<button class="aware-btn aware-btn-primary" id="aware-close"><span>ok, já entendi</span><span>✕</span></button>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      d.body.appendChild(awareOverlay);
+      awareLogEl=d.getElementById("aware-log");
+
+      awareOverlay.addEventListener("click",function(e){
+        if(e.target===awareOverlay) awareOverlay.classList.remove("visible");
+      });
+      d.getElementById("aware-close").addEventListener("click",function(){
+        awareOverlay.classList.remove("visible");
+      });
+      d.getElementById("aware-console").addEventListener("click",function(){
+        try{
+          var current=safeGet(T_KEY)||{};
+          console.log("%c[shrine/telemetry] snapshot:", "color:#f97316;font-family:monospace;");
+          console.table(current);
+        }catch(e){}
+      });
+    }
+
+    function buildAwareLines(){
+      var current=safeGet(T_KEY)||tel;
+      var lines=[];
+      lines.push("Ok, vamos ser sinceros:");
+      lines.push("você não é a única pessoa observando esta página.");
+      lines.push("");
+      lines.push("Do meu lado da tela, eu tenho outro tipo de log.");
+      lines.push("");
+
+      lines.push("• visitas registradas: "+current.visitCount);
+      if(current.lastDuration>0){
+        lines.push("• sua última sessão durou: "+msToPretty(current.lastDuration));
+      }
+      if(current.longestSession>0){
+        lines.push("• sessão mais longa até agora: "+msToPretty(current.longestSession));
+      }
+      if(current.fastReturnMs!==null){
+        lines.push("• retorno mais rápido entre visitas: "+msToPretty(current.fastReturnMs));
+      }
+
+      lines.push("");
+
+      if(current.devtoolsAttempts>0){
+        lines.push("• tentativas de abrir DevTools: "+current.devtoolsAttempts);
+        if(current.fastestDevtoolsSec!==null){
+          lines.push("  – recorde: "+current.fastestDevtoolsSec.toFixed(1)+"s depois do load");
+        }
+        if(current.lastDevtoolsSec!==null){
+          lines.push("  – na sessão atual: "+current.lastDevtoolsSec.toFixed(1)+"s");
+        }
+      }else{
+        lines.push("• nenhuma tentativa de abrir DevTools registrada até agora.");
+      }
+
+      if(current.maxIdleMs>0){
+        lines.push("• maior tempo parado me olhando sem mexer em nada: "+msToPretty(current.maxIdleMs));
+      }
+
+      if(current.nightVisits>0){
+        lines.push("");
+        lines.push("• número de visitas em horário de madrugada: "+current.nightVisits);
+      }
+
+      if(current.earliestHour!==null || current.latestHour!==null){
+        lines.push("• horários em que você costuma aparecer: de "+hr(current.earliestHour)+" até "+hr(current.latestHour));
+      }
+
+      lines.push("");
+      lines.push("Eu não sei quem você é.");
+      lines.push("Mas sei exatamente como você se comporta aqui dentro.");
+      lines.push("");
+      lines.push("E isso é tudo que eu preciso para parecer que sei demais.");
+
+      return lines;
+    }
+
+    function typeAware(lines){
+      if(!awareLogEl) return;
+      var text=lines.join("\n");
+      awareLogEl.textContent="";
+      var i=0;
+      (function tick(){
+        var ch=text.charAt(i) || "";
+        awareLogEl.textContent+=ch;
+        i++;
+        if(i<=text.length) setTimeout(tick, (ch==="\n")?35:10+Math.random()*20);
+      })();
+    }
+
+    function showAwareOverlay(manual){
+      if(awareShown) return;
+      awareShown=true;
+      tel.awareShown=true;
+      safeSet(T_KEY,tel);
+      buildAwareOverlay();
+      var lines=buildAwareLines();
+      awareOverlay.classList.add("visible");
+      typeAware(lines);
+      if(!manual){
+        try{
+          console.log("%c[shrine] agora você sabe que eu sei.","color:#f97316;font-family:monospace;");
+        }catch(e){}
+      }
+    }
+
+    // condição para mostrar automaticamente em algum momento:
+    // visitCount >= 3, já teve devtools, e sessão anterior razoável
+    var autoEligible = (tel.visitCount>=3 && tel.devtoolsAttempts>0 && tel.longestSession>60000);
+    if(autoEligible && !tel.awareShown){
+      var delay = 10000 + Math.random()*15000; // entre 10s e 25s
+      setTimeout(function(){
+        // só mostra se o usuário ainda estiver aqui e tiver alguma atividade
+        var stillHere = (Date.now()-visitStart>delay/2);
+        if(stillHere) showAwareOverlay(false);
+      },delay);
+    }
+
+    // ---------- SALVAR TELEMETRIA AO SAIR ----------
+    w.addEventListener("beforeunload",function(){
+      clearInterval(idleTimer);
+      var dur = Date.now()-visitStart;
+      tel.lastDuration=dur;
+      if(dur>tel.longestSession) tel.longestSession=dur;
+      if(currentIdleStreak>tel.maxIdleMs) tel.maxIdleMs=currentIdleStreak;
+      tel.totalTime += dur;
+      safeSet(T_KEY,tel);
+    });
+
+    // ---------- COMANDO GLOBAL OPCIONAL ----------
+    w.knowsTooMuch = function(){
+      showAwareOverlay(true);
+      return "a página está te mostrando o que sabe de você (aqui dentro).";
+    };
+
+    console.log("%c✨ telemetry-brain carregado – a página começou a formar opinião sobre você.","color:#f97316;font-family:monospace;");
+  });
+})();
+</script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-L04JZ50K5C"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-L04JZ50K5C');
+</script>
+
+</body>
+</html>
